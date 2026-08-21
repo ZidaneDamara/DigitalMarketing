@@ -13,12 +13,14 @@
             <p class="text-muted mb-0">Pencatatan aktivitas Live TikTok harian, penonton, likes, komentar, share, STU, dan bukti screenshot.</p>
         </div>
         <div class="d-flex align-items-center gap-2 flex-wrap">
+            @role('Super Admin')
             <button type="button" class="btn btn-outline-danger rounded-pill px-3 shadow-sm" id="btnExportPdf">
                 <i class="fas fa-file-pdf me-1.5"></i> Export PDF
             </button>
             <button type="button" class="btn btn-outline-success rounded-pill px-3 shadow-sm" id="btnExportExcel">
                 <i class="fas fa-file-excel me-1.5"></i> Export Excel (CSV)
             </button>
+            @endrole
             <button type="button" class="btn btn-yamaha-primary rounded-pill px-4 shadow-sm" id="btnTambahLaporan">
                 <i class="fas fa-plus-circle me-1.5"></i> Input Live TikTok Baru
             </button>

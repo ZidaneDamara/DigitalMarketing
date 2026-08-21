@@ -289,15 +289,11 @@
             <li class="{{ request()->routeIs('personal-kpis.*') ? 'active' : '' }}">
                 <a href="{{ route('personal-kpis.index') }}"><i class="fas fa-user-check text-warning"></i> KPI Pribadi AMD</a>
             </li>
-            <li class="{{ request()->routeIs('audit-logs.index') ? 'active' : '' }}">
-                <a href="{{ route('audit-logs.index') }}"><i class="fas fa-shield-alt text-danger"></i> Audit System Logs</a>
-            </li>
-            @endrole
-
             <li class="menu-header">EXPORT LAPORAN</li>
             <li class="{{ request()->routeIs('exports.*') ? 'active' : '' }}">
                 <a href="{{ route('exports.index') }}"><i class="fas fa-file-export text-secondary"></i> Export PDF / Excel</a>
             </li>
+            @endrole
         </ul>
     </aside>
 

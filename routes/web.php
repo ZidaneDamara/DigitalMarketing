@@ -44,8 +44,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/reports/tiktok-live', [TiktokLiveReportController::class, 'store'])->name('reports.tiktok-live.store');
     Route::get('/reports/tiktok-live/{tiktokLive}', [TiktokLiveReportController::class, 'show'])->name('reports.tiktok-live.show');
     Route::delete('/reports/tiktok-live/{tiktokLive}', [TiktokLiveReportController::class, 'destroy'])->name('reports.tiktok-live.destroy');
-    Route::get('/reports/tiktok-live/{tiktokLive}/pdf', [TiktokLiveReportController::class, 'exportSinglePdf'])->name('reports.tiktok-live.export-pdf');
-    Route::get('/reports/tiktok-live/{tiktokLive}/jpg', [TiktokLiveReportController::class, 'exportSingleJpg'])->name('reports.tiktok-live.export-jpg');
 
     Route::get('/reports/weekly', [WeeklyReportController::class, 'index'])->name('reports.weekly.index');
     Route::post('/reports/weekly', [WeeklyReportController::class, 'store'])->name('reports.weekly.store');
@@ -55,13 +53,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reports/monthly', [MonthlyInsightController::class, 'index'])->name('reports.monthly.index');
     Route::post('/reports/monthly', [MonthlyInsightController::class, 'store'])->name('reports.monthly.store');
 
-    // Export Center
-    Route::get('/exports', [ExportController::class, 'index'])->name('exports.index');
-    Route::get('/exports/pdf', [ExportController::class, 'exportPdf'])->name('exports.pdf');
-    Route::get('/exports/excel', [ExportController::class, 'exportExcel'])->name('exports.excel');
-
     // Super Admin Exclusive Routes
     Route::middleware(['role:Super Admin'])->group(function () {
+        // Export Center & Export Features (Super Admin Only)
+        Route::get('/exports', [ExportController::class, 'index'])->name('exports.index');
+        Route::get('/exports/pdf', [ExportController::class, 'exportPdf'])->name('exports.pdf');
+        Route::get('/exports/excel', [ExportController::class, 'exportExcel'])->name('exports.excel');
+        Route::get('/reports/tiktok-live/{tiktokLive}/pdf', [TiktokLiveReportController::class, 'exportSinglePdf'])->name('reports.tiktok-live.export-pdf');
+        Route::get('/reports/tiktok-live/{tiktokLive}/jpg', [TiktokLiveReportController::class, 'exportSingleJpg'])->name('reports.tiktok-live.export-jpg');
+
         // Master Data CRUD
         Route::resource('master/branches', BranchController::class, ['names' => 'master.branches']);
         Route::resource('master/users', UserController::class, ['names' => 'master.users']);
