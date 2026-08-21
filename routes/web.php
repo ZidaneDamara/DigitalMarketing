@@ -13,6 +13,7 @@ use App\Http\Controllers\Master\BranchController;
 use App\Http\Controllers\Master\UserController;
 use App\Http\Controllers\Report\DailyReportController;
 use App\Http\Controllers\Report\MonthlyInsightController;
+use App\Http\Controllers\Report\TiktokLiveReportController;
 use App\Http\Controllers\Report\WeeklyReportController;
 use Illuminate\Support\Facades\Route;
 
@@ -33,10 +34,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
     Route::get('/branch-performance', [BranchPerformanceController::class, 'index'])->name('branch.performance');
 
-    // Daily, Weekly & Monthly Report Engine
+    // Daily, Weekly, TikTok Live & Monthly Report Engine
     Route::get('/reports/daily', [DailyReportController::class, 'index'])->name('reports.daily.index');
     Route::post('/reports/daily', [DailyReportController::class, 'store'])->name('reports.daily.store');
     Route::get('/reports/daily/{dailyReport}', [DailyReportController::class, 'show'])->name('reports.daily.show');
+
+    // TikTok Live Reports
+    Route::get('/reports/tiktok-live', [TiktokLiveReportController::class, 'index'])->name('reports.tiktok-live.index');
+    Route::post('/reports/tiktok-live', [TiktokLiveReportController::class, 'store'])->name('reports.tiktok-live.store');
+    Route::get('/reports/tiktok-live/{tiktokLive}', [TiktokLiveReportController::class, 'show'])->name('reports.tiktok-live.show');
+    Route::delete('/reports/tiktok-live/{tiktokLive}', [TiktokLiveReportController::class, 'destroy'])->name('reports.tiktok-live.destroy');
+    Route::get('/reports/tiktok-live/{tiktokLive}/pdf', [TiktokLiveReportController::class, 'exportSinglePdf'])->name('reports.tiktok-live.export-pdf');
+    Route::get('/reports/tiktok-live/{tiktokLive}/jpg', [TiktokLiveReportController::class, 'exportSingleJpg'])->name('reports.tiktok-live.export-jpg');
 
     Route::get('/reports/weekly', [WeeklyReportController::class, 'index'])->name('reports.weekly.index');
     Route::post('/reports/weekly', [WeeklyReportController::class, 'store'])->name('reports.weekly.store');

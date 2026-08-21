@@ -118,6 +118,59 @@
             </tbody>
         </table>
 
+    @elseif($type === 'tiktok_live')
+        <h4>Detail Laporan Harian Live TikTok</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 25px;">No</th>
+                    <th>Tanggal Live</th>
+                    <th>Kode</th>
+                    <th>Nama Cabang</th>
+                    <th>Nama Host (Yang Live)</th>
+                    <th class="text-center">Jabatan</th>
+                    <th class="text-center">Durasi</th>
+                    <th class="text-center">Penonton</th>
+                    <th class="text-center">Likes</th>
+                    <th class="text-center">Komentar / Share</th>
+                    <th class="text-center">STU</th>
+                    <th>Bukti SS Live</th>
+                    <th>Catatan</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($tiktokLiveReports as $index => $row)
+                <tr>
+                    <td class="text-center">{{ $index + 1 }}</td>
+                    <td class="text-center">{{ $row->tanggal_live ? $row->tanggal_live->format('d/m/Y') : '-' }}</td>
+                    <td>{{ $row->branch->kode ?? '-' }}</td>
+                    <td>{{ $row->branch->nama_cabang ?? '-' }}</td>
+                    <td><strong>{{ $row->nama_host }}</strong></td>
+                    <td class="text-center">
+                        <span class="{{ $row->jabatan === 'PIC Digital' ? 'badge-f' : 'badge-nf' }}">{{ $row->jabatan }}</span>
+                    </td>
+                    <td class="text-center">{{ $row->formatted_durasi }}</td>
+                    <td class="text-center">{{ number_format($row->jumlah_penonton) }}</td>
+                    <td class="text-center">{{ number_format($row->jumlah_like) }}</td>
+                    <td class="text-center">{{ number_format($row->jumlah_komentar) }} / {{ number_format($row->jumlah_share) }}</td>
+                    <td class="text-center"><strong>{{ $row->stu !== null ? number_format($row->stu) . ' Unit' : '-' }}</strong></td>
+                    <td class="text-center">
+                        @if($row->bukti_screenshot)
+                            <a href="{{ asset($row->bukti_screenshot) }}" target="_blank" style="color: #003399; font-weight: bold; text-decoration: underline;">Buka SS</a>
+                        @else
+                            <span style="color: #999;">-</span>
+                        @endif
+                    </td>
+                    <td>{{ $row->catatan ?: '-' }}</td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="13" class="text-center">Tidak ada data laporan Live TikTok pada filter ini.</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+
     @elseif($type === 'weekly')
         <h4>Detail Laporan Mingguan (Post Insight)</h4>
         <table>

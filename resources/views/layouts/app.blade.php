@@ -260,6 +260,9 @@
             <li class="{{ request()->routeIs('reports.daily.*') ? 'active' : '' }}">
                 <a href="{{ route('reports.daily.index') }}"><i class="fas fa-calendar-check text-primary"></i> Daily Report (Harian)</a>
             </li>
+            <li class="{{ request()->routeIs('reports.tiktok-live.*') ? 'active' : '' }}">
+                <a href="{{ route('reports.tiktok-live.index') }}"><i class="fab fa-tiktok text-danger"></i> Live TikTok Report</a>
+            </li>
             <li class="{{ request()->routeIs('reports.weekly.*') ? 'active' : '' }}">
                 <a href="{{ route('reports.weekly.index') }}"><i class="fas fa-calendar-week text-warning"></i> Weekly Report (Post Insight)</a>
             </li>

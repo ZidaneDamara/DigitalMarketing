@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Branch;
 use App\Models\DailyReport;
 use App\Models\MonthlyInsight;
+use App\Models\TiktokLiveReport;
 use App\Models\WeeklyReport;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -38,6 +39,7 @@ class ExportController extends Controller
         $dailyReports = collect();
         $weeklyReports = collect();
         $monthlyInsights = collect();
+        $tiktokLiveReports = collect();
 
         if ($type === 'daily') {
             $query = DailyReport::with(['branch', 'user']);
@@ -52,6 +54,20 @@ class ExportController extends Controller
                 $query->whereYear('tanggal', $tahun)->whereMonth('tanggal', $bulan);
             }
             $dailyReports = $query->latest('tanggal')->get();
+
+        } elseif ($type === 'tiktok_live') {
+            $query = TiktokLiveReport::with(['branch', 'user']);
+            if ($branchId) {
+                $query->where('branch_id', $branchId);
+            }
+            if ($tanggal) {
+                $query->where('tanggal_live', $tanggal);
+            } elseif ($tanggalAwal && $tanggalAkhir) {
+                $query->whereBetween('tanggal_live', [$tanggalAwal, $tanggalAkhir]);
+            } else {
+                $query->whereYear('tanggal_live', $tahun)->whereMonth('tanggal_live', $bulan);
+            }
+            $tiktokLiveReports = $query->latest('tanggal_live')->get();
 
         } elseif ($type === 'weekly') {
             $query = WeeklyReport::with(['branch', 'user']);
@@ -76,7 +92,7 @@ class ExportController extends Controller
         }
 
         $pdf = Pdf::loadView('export.pdf_template', compact(
-            'type', 'branches', 'dailyReports', 'weeklyReports', 'monthlyInsights',
+            'type', 'branches', 'dailyReports', 'weeklyReports', 'monthlyInsights', 'tiktokLiveReports',
             'tahun', 'bulan', 'tanggal', 'tanggalAwal', 'tanggalAkhir', 'mingguKe'
         ))->setPaper('a4', 'landscape');
 
@@ -150,6 +166,42 @@ class ExportController extends Controller
                         $row->tiktok_followers_gained,
                         $row->google_rating,
                         $row->google_review_gained,
+                        $row->catatan,
+                    ]);
+                }
+            } elseif ($type === 'tiktok_live') {
+                $query = TiktokLiveReport::with(['branch', 'user']);
+                if ($branchId) {
+                    $query->where('branch_id', $branchId);
+                }
+                if ($tanggal) {
+                    $query->where('tanggal_live', $tanggal);
+                } elseif ($tanggalAwal && $tanggalAkhir) {
+                    $query->whereBetween('tanggal_live', [$tanggalAwal, $tanggalAkhir]);
+                } else {
+                    $query->whereYear('tanggal_live', $tahun)->whereMonth('tanggal_live', $bulan);
+                }
+                $reports = $query->latest('tanggal_live')->get();
+
+                fputcsv($file, [
+                    'No', 'Kode Cabang', 'Nama Cabang', 'Tanggal Live', 'Nama Host (Yang Live)',
+                    'Jabatan Host', 'Durasi Jam', 'Durasi Menit', 'Total Menit', 'Diinput Oleh',
+                    'Bukti Screenshot URL', 'Catatan'
+                ]);
+
+                foreach ($reports as $index => $row) {
+                    fputcsv($file, [
+                        $index + 1,
+                        $row->branch->kode ?? '-',
+                        $row->branch->nama_cabang ?? '-',
+                        $row->tanggal_live ? $row->tanggal_live->format('Y-m-d') : '-',
+                        $row->nama_host,
+                        $row->jabatan,
+                        $row->durasi_jam,
+                        $row->durasi_menit,
+                        $row->total_minutes,
+                        $row->user->name ?? '-',
+                        $row->bukti_screenshot ? asset($row->bukti_screenshot) : '-',
                         $row->catatan,
                     ]);
                 }

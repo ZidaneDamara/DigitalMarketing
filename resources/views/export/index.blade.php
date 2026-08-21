@@ -30,6 +30,7 @@
                         <label class="form-label fw-semibold small">Pilih Jenis Laporan <span class="text-danger">*</span></label>
                         <select name="report_type" id="pdf_report_type" class="form-select rounded-3 shadow-none report-type-select" data-target="pdf" required>
                             <option value="daily" selected>Laporan Harian (Daily Report)</option>
+                            <option value="tiktok_live">Laporan Live TikTok</option>
                             <option value="weekly">Laporan Mingguan (Post Insight)</option>
                             <option value="monthly">Laporan Bulanan (Monthly Insight)</option>
                         </select>
@@ -123,6 +124,7 @@
                         <label class="form-label fw-semibold small">Pilih Jenis Laporan <span class="text-danger">*</span></label>
                         <select name="report_type" id="excel_report_type" class="form-select rounded-3 shadow-none report-type-select" data-target="excel" required>
                             <option value="daily" selected>Laporan Harian (Daily Report)</option>
+                            <option value="tiktok_live">Laporan Live TikTok</option>
                             <option value="weekly">Laporan Mingguan (Post Insight)</option>
                             <option value="monthly">Laporan Bulanan (Monthly Insight)</option>
                         </select>
@@ -207,7 +209,7 @@
             const target = $(this).data('target');
             const val = $(this).val();
 
-            if (val === 'daily') {
+            if (val === 'daily' || val === 'tiktok_live') {
                 $(`#${target}_daily_filters`).removeClass('d-none');
                 $(`#${target}_weekly_filters`).addClass('d-none');
             } else if (val === 'weekly') {
