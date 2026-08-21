@@ -52,7 +52,12 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Password <span class="text-muted small fw-normal" id="password-help">(Minimal 6 karakter)</span></label>
-                        <input type="password" name="password" id="password" class="form-control" placeholder="••••••••">
+                        <div class="input-group">
+                            <input type="password" name="password" id="password" class="form-control" placeholder="••••••••">
+                            <button type="button" class="btn btn-outline-secondary" id="btnToggleUserPassword">
+                                <i class="fas fa-eye" id="toggleUserPasswordIcon"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Role Hak Akses</label>
@@ -179,6 +184,18 @@
                     });
                 }
             });
+        });
+        $('#btnToggleUserPassword').on('click', function() {
+            const passInput = $('#password');
+            const toggleIcon = $('#toggleUserPasswordIcon');
+            const isPassword = passInput.attr('type') === 'password';
+            
+            passInput.attr('type', isPassword ? 'text' : 'password');
+            if (isPassword) {
+                toggleIcon.removeClass('fa-eye').addClass('fa-eye-slash text-primary');
+            } else {
+                toggleIcon.removeClass('fa-eye-slash text-primary').addClass('fa-eye');
+            }
         });
     });
 </script>

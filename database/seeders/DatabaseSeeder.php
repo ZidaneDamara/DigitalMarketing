@@ -63,81 +63,91 @@ class DatabaseSeeder extends Seeder
 
         $branches = collect();
         foreach ($branchesData as $bData) {
-            $branches->push(Branch::create($bData));
+            $branches->push(Branch::updateOrCreate(['kode' => $bData['kode']], $bData));
         }
 
-        // 3. Create 2 Super Admin Users
-        $superAdmin1 = User::create([
-            'name' => 'Muhammad Zidane Damara',
-            'email' => 'zidane@aspacindo.co.id',
-            'password' => Hash::make('password123'),
-            'branch_id' => null,
-            'status' => 'active',
-        ]);
+        // 3. Create Super Admin Users
+        $superAdmin1 = User::updateOrCreate(
+            ['email' => 'zidane@aspacindo.co.id'],
+            [
+                'name' => 'Muhammad Zidane Damara',
+                'password' => Hash::make('password123'),
+                'branch_id' => null,
+                'status' => 'active',
+            ]
+        );
         $superAdmin1->assignRole($superAdminRole);
 
-        // Super Admin 1 Alias (superadmin@aspacindo.co.id for convenience)
-        $superAdmin1Alias = User::create([
-            'name' => 'Muhammad Zidane Damara (Super Admin)',
-            'email' => 'superadmin@aspacindo.co.id',
-            'password' => Hash::make('password123'),
-            'branch_id' => null,
-            'status' => 'active',
-        ]);
+        $superAdmin1Alias = User::updateOrCreate(
+            ['email' => 'superadmin@aspacindo.co.id'],
+            [
+                'name' => 'Muhammad Zidane Damara (Super Admin)',
+                'password' => Hash::make('password123'),
+                'branch_id' => null,
+                'status' => 'active',
+            ]
+        );
         $superAdmin1Alias->assignRole($superAdminRole);
 
-        $superAdmin2 = User::create([
-            'name' => 'Amalia Putri',
-            'email' => 'amalia@aspacindo.co.id',
-            'password' => Hash::make('password123'),
-            'branch_id' => null,
-            'status' => 'active',
-        ]);
+        $superAdmin2 = User::updateOrCreate(
+            ['email' => 'amalia@aspacindo.co.id'],
+            [
+                'name' => 'Amalia Putri',
+                'password' => Hash::make('password123'),
+                'branch_id' => null,
+                'status' => 'active',
+            ]
+        );
         $superAdmin2->assignRole($superAdminRole);
 
         // 4. Create Area Manager User
-        $areaManager = User::create([
-            'name' => 'Suparman',
-            'email' => 'suparman@aspacindo.co.id',
-            'password' => Hash::make('password123'),
-            'branch_id' => null,
-            'status' => 'active',
-        ]);
+        $areaManager = User::updateOrCreate(
+            ['email' => 'suparman@aspacindo.co.id'],
+            [
+                'name' => 'Suparman',
+                'password' => Hash::make('password123'),
+                'branch_id' => null,
+                'status' => 'active',
+            ]
+        );
         $areaManager->assignRole($areaManagerRole);
 
-        // Area Manager Alias (areamanager@aspacindo.co.id for convenience)
-        $areaManagerAlias = User::create([
-            'name' => 'Suparman (Area Manager)',
-            'email' => 'areamanager@aspacindo.co.id',
-            'password' => Hash::make('password123'),
-            'branch_id' => null,
-            'status' => 'active',
-        ]);
+        $areaManagerAlias = User::updateOrCreate(
+            ['email' => 'areamanager@aspacindo.co.id'],
+            [
+                'name' => 'Suparman (Area Manager)',
+                'password' => Hash::make('password123'),
+                'branch_id' => null,
+                'status' => 'active',
+            ]
+        );
         $areaManagerAlias->assignRole($areaManagerRole);
 
-        // 5. Create 5 PIC Digital Users (1 per branch)
+        // 5. Create PIC Digital Users (1 per branch)
         $picSlugList = ['pekanbaru', 'sorek', 'kandis', 'sungaipagar', 'medan'];
         foreach ($branches as $index => $branch) {
             $slug = $picSlugList[$index];
 
-            // Primary Account (e.g. pekanbaru@aspacindo.co.id)
-            $picUser = User::create([
-                'name' => 'PIC Digital ' . $branch->nama_cabang,
-                'email' => $slug . '@aspacindo.co.id',
-                'password' => Hash::make('password123'),
-                'branch_id' => $branch->id,
-                'status' => 'active',
-            ]);
+            $picUser = User::updateOrCreate(
+                ['email' => $slug . '@aspacindo.co.id'],
+                [
+                    'name' => 'PIC Digital ' . $branch->nama_cabang,
+                    'password' => Hash::make('password123'),
+                    'branch_id' => $branch->id,
+                    'status' => 'active',
+                ]
+            );
             $picUser->assignRole($picRole);
 
-            // Alias Account with pic. prefix (e.g. pic.pekanbaru@aspacindo.co.id)
-            $picUserAlias = User::create([
-                'name' => 'PIC Digital ' . $branch->nama_cabang . ' (Alias)',
-                'email' => 'pic.' . $slug . '@aspacindo.co.id',
-                'password' => Hash::make('password123'),
-                'branch_id' => $branch->id,
-                'status' => 'active',
-            ]);
+            $picUserAlias = User::updateOrCreate(
+                ['email' => 'pic.' . $slug . '@aspacindo.co.id'],
+                [
+                    'name' => 'PIC Digital ' . $branch->nama_cabang . ' (Alias)',
+                    'password' => Hash::make('password123'),
+                    'branch_id' => $branch->id,
+                    'status' => 'active',
+                ]
+            );
             $picUserAlias->assignRole($picRole);
         }
     }
