@@ -14,14 +14,16 @@ class DailyReportRequest extends FormRequest
     public function rules(): array
     {
         $today = now()->format('Y-m-d');
+        $user = $this->user();
+
+        $tanggalRules = ['required', 'date'];
+        if (!$user || !$user->hasRole('Super Admin')) {
+            $tanggalRules[] = "in:$today";
+        }
 
         return [
             'branch_id' => ['required', 'exists:branches,id'],
-            'tanggal' => [
-                'required',
-                'date',
-                "in:$today",
-            ],
+            'tanggal' => $tanggalRules,
             'ig_feed' => ['required', 'integer', 'min:0'],
             'ig_reels' => ['required', 'integer', 'min:0'],
             'ig_story' => ['required', 'integer', 'min:0'],

@@ -49,12 +49,12 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content border-0 shadow-lg rounded-4">
             <div class="modal-header bg-primary text-white rounded-top-4">
-                <h5 class="modal-header-title fw-bold m-0"><i class="fas fa-edit me-2"></i> Input Daily Report (Tanggal {{ date('d F Y', strtotime($today)) }})</h5>
+                <h5 class="modal-header-title fw-bold m-0" id="modal-daily-title"><i class="fas fa-edit me-2"></i> Input Daily Report (Tanggal {{ date('d F Y', strtotime($today)) }})</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form id="form-daily">
                 <div class="modal-body p-4">
-                    <input type="hidden" name="tanggal" value="{{ $today }}">
+                    <input type="hidden" name="tanggal" id="daily_tanggal" value="{{ $today }}">
                     
                     @if(auth()->user()->hasRole('Super Admin'))
                     <div class="mb-3">
@@ -182,7 +182,44 @@
 
         $('#btn-input-daily').click(function () {
             $('#form-daily')[0].reset();
+            $('#daily_tanggal').val('{{ $today }}');
+            $('#modal-daily-title').html('<i class="fas fa-plus-circle me-2"></i> Input Daily Report (Tanggal {{ date('d F Y', strtotime($today)) }})');
             $('#modal-daily').modal('show');
+        });
+
+        $(document).on('click', '.btn-edit', function () {
+            const id = $(this).data('id');
+            $.get("{{ url('/reports/daily') }}/" + id, function (data) {
+                if (data) {
+                    const tgl = data.tanggal ? data.tanggal.substring(0, 10) : '{{ $today }}';
+                    $('#daily_tanggal').val(tgl);
+                    
+                    if ($('#daily_branch_id').is('select')) {
+                        $('#daily_branch_id').val(data.branch_id);
+                    }
+                    
+                    $('#ig_feed').val(data.ig_feed);
+                    $('#ig_reels').val(data.ig_reels);
+                    $('#ig_story').val(data.ig_story);
+                    $('#ig_followers_gained').val(data.ig_followers_gained);
+                    
+                    $('#fb_post').val(data.fb_post);
+                    $('#fb_marketplace').val(data.fb_marketplace);
+                    $('#fb_followers_gained').val(data.fb_followers_gained);
+                    
+                    $('#tiktok_post').val(data.tiktok_post);
+                    $('#tiktok_live').val(data.tiktok_live);
+                    $('#tiktok_followers_gained').val(data.tiktok_followers_gained);
+                    
+                    $('#google_rating').val(data.google_rating);
+                    $('#google_review_gained').val(data.google_review_gained);
+                    
+                    $('#catatan').val(data.catatan);
+                    
+                    $('#modal-daily-title').html('<i class="fas fa-edit me-2"></i> Edit Daily Report');
+                    $('#modal-daily').modal('show');
+                }
+            });
         });
 
         $('#form-daily').submit(function (e) {
