@@ -23,31 +23,39 @@ Route::get('/', function () {
 });
 
 // Public Storage & File Serving (Fix 403 Forbidden for uploaded screenshots on Hostinger)
-Route::get('/files/{path}', function ($path) {
+$serveFile = function ($path) {
     $cleanPath = ltrim($path, '/');
-    $filePath = storage_path('app/public/' . $cleanPath);
-    if (!file_exists($filePath)) {
-        $altPath = storage_path('app/' . $cleanPath);
-        if (file_exists($altPath)) {
-            return response()->file($altPath);
-        }
-        abort(404);
+    if (preg_match('#(tiktok_live_screenshots|screenshots)/.+$#i', $cleanPath, $matches)) {
+        $cleanPath = $matches[0];
     }
-    return response()->file($filePath);
-})->where('path', '.*')->name('files.show');
+    $withoutPublic = preg_replace('#^public/#i', '', $cleanPath);
 
-Route::get('/storage/{path}', function ($path) {
-    $cleanPath = ltrim($path, '/');
-    $filePath = storage_path('app/public/' . $cleanPath);
-    if (!file_exists($filePath)) {
-        $altPath = storage_path('app/' . $cleanPath);
-        if (file_exists($altPath)) {
-            return response()->file($altPath);
+    $candidatePaths = array_unique(array_filter([
+        storage_path('app/public/' . $cleanPath),
+        storage_path('app/public/' . $withoutPublic),
+        storage_path('app/public/public/' . $cleanPath),
+        storage_path('app/private/' . $cleanPath),
+        storage_path('app/private/public/' . $cleanPath),
+        storage_path('app/private/' . $withoutPublic),
+        storage_path('app/' . $cleanPath),
+        storage_path('app/' . $withoutPublic),
+        public_path($cleanPath),
+        public_path('storage/' . $cleanPath),
+        public_path('files/' . $cleanPath),
+        public_path($withoutPublic),
+    ]));
+
+    foreach ($candidatePaths as $fullPath) {
+        if (file_exists($fullPath) && !is_dir($fullPath)) {
+            return response()->file($fullPath);
         }
-        abort(404);
     }
-    return response()->file($filePath);
-})->where('path', '.*')->name('storage.show');
+
+    abort(404);
+};
+
+Route::get('/files/{path}', $serveFile)->where('path', '.*')->name('files.show');
+Route::get('/storage/{path}', $serveFile)->where('path', '.*')->name('storage.show');
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);

@@ -187,8 +187,8 @@
             <div class="mb-2">
                 <small class="fw-bold text-dark d-block mb-2"><i class="fas fa-camera me-1.5 text-danger"></i> Bukti Screenshot Live TikTok</small>
                 <div class="screenshot-container">
-                    @if($report->bukti_screenshot)
-                        <img id="ssImg" src="{{ asset($report->bukti_screenshot) }}" crossorigin="anonymous" alt="Bukti Screenshot Live">
+                    @if($report->bukti_screenshot_url)
+                        <img id="ssImg" src="{{ $report->bukti_screenshot_url }}" crossorigin="anonymous" alt="Bukti Screenshot Live">
                     @else
                         <div class="py-4 text-muted small"><i class="fas fa-image fa-2x d-block mb-2 text-secondary"></i> Tidak ada bukti screenshot.</div>
                     @endif

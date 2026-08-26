@@ -70,13 +70,13 @@ class MonthlyInsightController extends Controller
             if ($request->hasFile($inputName)) {
                 $file = $request->file($inputName);
                 $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
-                $path = $file->storeAs('public/screenshots', $filename);
+                $path = $file->storeAs('screenshots', $filename, 'public');
 
                 // Update or create screenshot record
                 MonthlyInsightScreenshot::updateOrCreate(
                     ['monthly_insight_id' => $insight->id, 'kategori' => $kategori],
                     [
-                        'file_path' => Storage::url($path),
+                        'file_path' => $path,
                         'file_name' => $filename,
                     ]
                 );

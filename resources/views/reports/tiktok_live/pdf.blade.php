@@ -167,10 +167,8 @@
 
     <h4 style="margin-bottom: 8px; color: #003399;">Bukti Screenshot Live TikTok:</h4>
     <div class="screenshot-box">
-        @if($report->bukti_screenshot && file_exists(public_path($report->bukti_screenshot)))
-            <img src="{{ public_path($report->bukti_screenshot) }}" alt="Bukti Screenshot Live TikTok">
-        @elseif($report->bukti_screenshot)
-            <img src="{{ asset($report->bukti_screenshot) }}" alt="Bukti Screenshot Live TikTok">
+        @if($report->bukti_screenshot_url)
+            <img src="{{ $report->bukti_screenshot_url }}" alt="Bukti Screenshot Live TikTok">
         @else
             <p style="color: #94a3b8; font-style: italic; padding: 20px;">Tidak ada bukti screenshot yang diunggah.</p>
         @endif

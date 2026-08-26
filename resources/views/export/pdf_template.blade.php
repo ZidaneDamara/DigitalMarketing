@@ -155,8 +155,8 @@
                     <td class="text-center">{{ number_format($row->jumlah_komentar) }} / {{ number_format($row->jumlah_share) }}</td>
                     <td class="text-center"><strong>{{ $row->stu !== null ? number_format($row->stu) . ' Unit' : '-' }}</strong></td>
                     <td class="text-center">
-                        @if($row->bukti_screenshot)
-                            <a href="{{ asset($row->bukti_screenshot) }}" target="_blank" style="color: #003399; font-weight: bold; text-decoration: underline;">Buka SS</a>
+                        @if($row->bukti_screenshot_url)
+                            <a href="{{ $row->bukti_screenshot_url }}" target="_blank" style="color: #003399; font-weight: bold; text-decoration: underline;">Buka SS</a>
                         @else
                             <span style="color: #999;">-</span>
                         @endif

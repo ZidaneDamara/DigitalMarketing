@@ -119,14 +119,18 @@ class TiktokLiveReportController extends Controller
         if ($request->hasFile('bukti_screenshot')) {
             // Delete old file if exists
             if ($report->bukti_screenshot) {
-                $oldPath = str_replace('/storage/', 'public/', $report->bukti_screenshot);
-                Storage::delete($oldPath);
+                $clean = str_replace(['/storage/', 'storage/', '/files/', 'files/'], '', $report->bukti_screenshot);
+                $withoutPublic = preg_replace('#^public/#', '', ltrim($clean, '/'));
+                Storage::disk('public')->delete($withoutPublic);
+                Storage::disk('public')->delete('public/' . $withoutPublic);
+                Storage::delete($withoutPublic);
+                Storage::delete('public/' . $withoutPublic);
             }
 
             $file = $request->file('bukti_screenshot');
             $filename = 'tiktok_live_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('public/tiktok_live_screenshots', $filename);
-            $report->bukti_screenshot = Storage::url($path);
+            $path = $file->storeAs('tiktok_live_screenshots', $filename, 'public');
+            $report->bukti_screenshot = $path;
         }
 
         $report->save();
@@ -152,8 +156,12 @@ class TiktokLiveReportController extends Controller
     public function destroy(TiktokLiveReport $tiktokLive)
     {
         if ($tiktokLive->bukti_screenshot) {
-            $oldPath = str_replace('/storage/', 'public/', $tiktokLive->bukti_screenshot);
-            Storage::delete($oldPath);
+            $clean = str_replace(['/storage/', 'storage/', '/files/', 'files/'], '', $tiktokLive->bukti_screenshot);
+            $withoutPublic = preg_replace('#^public/#', '', ltrim($clean, '/'));
+            Storage::disk('public')->delete($withoutPublic);
+            Storage::disk('public')->delete('public/' . $withoutPublic);
+            Storage::delete($withoutPublic);
+            Storage::delete('public/' . $withoutPublic);
         }
 
         $id = $tiktokLive->id;

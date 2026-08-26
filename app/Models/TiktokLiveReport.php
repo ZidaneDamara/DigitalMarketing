@@ -63,11 +63,25 @@ class TiktokLiveReport extends Model
 
     public function getBuktiScreenshotUrlAttribute(): ?string
     {
-        if (!$this->bukti_screenshot) {
+        $raw = trim($this->bukti_screenshot ?? '');
+        if ($raw === '') {
             return null;
         }
 
-        $cleanPath = str_replace(['/storage/', 'storage/'], '', $this->bukti_screenshot);
+        if (preg_match('#https?://#i', $raw)) {
+            if (preg_match('#(tiktok_live_screenshots|screenshots)/.+$#i', $raw, $matches)) {
+                $cleanPath = $matches[0];
+            } else {
+                $parsed = parse_url($raw, PHP_URL_PATH);
+                $cleanPath = $parsed ?? $raw;
+            }
+        } else {
+            $cleanPath = $raw;
+        }
+
+        $cleanPath = preg_replace('#^/(storage|files|public)/#i', '', $cleanPath);
+        $cleanPath = preg_replace('#^(storage|files|public)/#i', '', $cleanPath);
+
         return url('files/' . ltrim($cleanPath, '/'));
     }
 

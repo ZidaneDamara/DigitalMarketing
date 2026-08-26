@@ -201,7 +201,7 @@ class ExportController extends Controller
                         $row->durasi_menit,
                         $row->total_minutes,
                         $row->user->name ?? '-',
-                        $row->bukti_screenshot ? asset($row->bukti_screenshot) : '-',
+                        $row->bukti_screenshot_url ?: '-',
                         $row->catatan,
                     ]);
                 }
