@@ -22,14 +22,32 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-// Public Storage File Serving (Fix 403 Forbidden for uploaded screenshots)
-Route::get('/storage/{path}', function ($path) {
-    $filePath = storage_path('app/public/' . $path);
+// Public Storage & File Serving (Fix 403 Forbidden for uploaded screenshots on Hostinger)
+Route::get('/files/{path}', function ($path) {
+    $cleanPath = ltrim($path, '/');
+    $filePath = storage_path('app/public/' . $cleanPath);
     if (!file_exists($filePath)) {
+        $altPath = storage_path('app/' . $cleanPath);
+        if (file_exists($altPath)) {
+            return response()->file($altPath);
+        }
         abort(404);
     }
     return response()->file($filePath);
-})->where('path', '.*');
+})->where('path', '.*')->name('files.show');
+
+Route::get('/storage/{path}', function ($path) {
+    $cleanPath = ltrim($path, '/');
+    $filePath = storage_path('app/public/' . $cleanPath);
+    if (!file_exists($filePath)) {
+        $altPath = storage_path('app/' . $cleanPath);
+        if (file_exists($altPath)) {
+            return response()->file($altPath);
+        }
+        abort(404);
+    }
+    return response()->file($filePath);
+})->where('path', '.*')->name('storage.show');
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);

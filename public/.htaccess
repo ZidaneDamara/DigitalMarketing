@@ -5,6 +5,10 @@
 
     RewriteEngine On
 
+    # Direct storage and files requests to index.php to bypass Hostinger 403 symlink restriction
+    RewriteRule ^storage/(.*)$ index.php [L]
+    RewriteRule ^files/(.*)$ index.php [L]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]

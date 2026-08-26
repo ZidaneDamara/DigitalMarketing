@@ -59,6 +59,18 @@ class TiktokLiveReport extends Model
         return implode(' ', $parts);
     }
 
+    protected $appends = ['bukti_screenshot_url'];
+
+    public function getBuktiScreenshotUrlAttribute(): ?string
+    {
+        if (!$this->bukti_screenshot) {
+            return null;
+        }
+
+        $cleanPath = str_replace(['/storage/', 'storage/'], '', $this->bukti_screenshot);
+        return url('files/' . ltrim($cleanPath, '/'));
+    }
+
     public function getTotalMinutesAttribute(): int
     {
         return ($this->durasi_jam * 60) + $this->durasi_menit;

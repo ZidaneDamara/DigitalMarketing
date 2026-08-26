@@ -47,8 +47,8 @@ class TiktokLiveReportController extends Controller
                 ->addColumn('jumlah_share', fn($row) => number_format($row->jumlah_share))
                 ->addColumn('stu', fn($row) => $row->stu !== null ? number_format($row->stu) . ' Unit' : '-')
                 ->addColumn('bukti_screenshot_url', function ($row) {
-                    if ($row->bukti_screenshot) {
-                        return '<a href="' . asset($row->bukti_screenshot) . '" target="_blank" class="badge bg-info text-white text-decoration-none px-2 py-1"><i class="fas fa-external-link-alt me-1"></i> Link SS Live</a>';
+                    if ($row->bukti_screenshot_url) {
+                        return '<a href="' . $row->bukti_screenshot_url . '" target="_blank" class="badge bg-info text-white text-decoration-none px-2 py-1"><i class="fas fa-external-link-alt me-1"></i> Link SS Live</a>';
                     }
                     return '<span class="text-muted small">-</span>';
                 })
