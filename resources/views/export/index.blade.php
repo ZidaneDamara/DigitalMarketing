@@ -113,8 +113,8 @@
                         <i class="fas fa-file-excel fa-2x"></i>
                     </div>
                     <div>
-                        <h5 class="fw-bold text-dark m-0">Export Data Excel (CSV)</h5>
-                        <div class="text-muted small">Unduh data mentah spreadsheet untuk analisis Microsoft Excel</div>
+                        <h5 class="fw-bold text-dark m-0">Export Dokumen Excel (.XLSX)</h5>
+                        <div class="text-muted small">Unduh spreadsheet eksekutif terformat rapi (Header Banner, Metric Cards, Hyperlink, & Total) untuk Microsoft Excel</div>
                     </div>
                 </div>
 
