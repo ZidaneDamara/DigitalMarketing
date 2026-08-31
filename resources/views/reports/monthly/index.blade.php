@@ -188,6 +188,15 @@
 
     <div class="row g-4">
         @forelse($insights as $ins)
+        @php
+            $ssMap = $ins->screenshots->keyBy('kategori');
+            $categories = [
+                'Instagram Insight' => ['icon' => 'fab fa-instagram text-danger', 'color' => 'danger'],
+                'Facebook Insight'  => ['icon' => 'fab fa-facebook text-primary', 'color' => 'primary'],
+                'TikTok Analytics'  => ['icon' => 'fab fa-tiktok text-dark', 'color' => 'dark'],
+                'Google Business'   => ['icon' => 'fab fa-google text-success', 'color' => 'success'],
+            ];
+        @endphp
         <div class="col-md-6 col-lg-4">
             <div class="card card-custom h-100 p-3">
                 <div class="d-flex align-items-center justify-content-between mb-2">
@@ -199,20 +208,35 @@
                     IG Views: <strong>{{ number_format($ins->ig_views) }}</strong> | TikTok Views: <strong>{{ number_format($ins->tiktok_views) }}</strong>
                 </div>
 
-                <!-- Screenshots Gallery Thumbnails -->
+                <!-- Screenshots Gallery 2x2 Grid -->
                 <div class="row g-2">
-                    @forelse($ins->screenshots as $ss)
+                    @foreach($categories as $catName => $meta)
+                    @php
+                        $ss = $ssMap->get($catName);
+                    @endphp
                     <div class="col-6">
-                        <div class="position-relative border rounded-3 overflow-hidden bg-light" style="height: 110px;">
-                            <img src="https://picsum.photos/300/200?random={{ $ss->id }}" class="w-100 h-100 object-fit-cover btn-preview-img" data-img="https://picsum.photos/800/600?random={{ $ss->id }}" data-title="{{ $ss->kategori }} - {{ $ins->branch->nama_cabang }}" style="cursor: pointer;">
-                            <span class="position-absolute bottom-0 start-0 w-100 bg-dark bg-opacity-75 text-white text-truncate p-1 small" style="font-size: 0.65rem;">
-                                {{ $ss->kategori }}
-                            </span>
+                        <div class="position-relative border rounded-3 overflow-hidden bg-light d-flex align-items-center justify-content-center" style="height: 110px;">
+                            @if($ss && $ss->file_url)
+                                <img src="{{ $ss->file_url }}" 
+                                     class="w-100 h-100 object-fit-cover btn-preview-img" 
+                                     data-img="{{ $ss->file_url }}" 
+                                     data-title="{{ $catName }} - {{ $ins->branch->nama_cabang }}" 
+                                     style="cursor: pointer;"
+                                     alt="{{ $catName }}"
+                                     onerror="this.onerror=null; this.src=''; this.parentElement.innerHTML='<div class=\'w-100 h-100 d-flex flex-column align-items-center justify-content-center bg-light text-muted p-2\'><i class=\'fas fa-image-slash text-secondary mb-1\'></i><span style=\'font-size: 0.65rem;\'>Gambar Tidak Ditemukan</span></div>';">
+                                <span class="position-absolute bottom-0 start-0 w-100 bg-dark bg-opacity-75 text-white text-truncate p-1 small" style="font-size: 0.65rem;">
+                                    <i class="{{ $meta['icon'] }} me-1"></i> {{ $catName }}
+                                </span>
+                            @else
+                                <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center bg-white text-muted p-2 text-center" style="border: 1px dashed #cbd5e1;">
+                                    <i class="{{ $meta['icon'] }} fa-lg mb-1 opacity-75"></i>
+                                    <span style="font-size: 0.65rem;" class="fw-semibold text-secondary d-block">{{ $catName }}</span>
+                                    <span style="font-size: 0.6rem;" class="text-muted">Belum Upload</span>
+                                </div>
+                            @endif
                         </div>
                     </div>
-                    @empty
-                    <div class="col-12 text-center text-muted py-3 small">Belum ada screenshot diupload</div>
-                    @endforelse
+                    @endforeach
                 </div>
             </div>
         </div>

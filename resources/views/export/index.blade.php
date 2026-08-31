@@ -7,7 +7,7 @@
     <!-- Page Header -->
     <div class="mb-4">
         <h3 class="fw-bold text-dark mb-1"><i class="fas fa-file-export text-secondary me-2"></i>Export Center Laporan Digital</h3>
-        <p class="text-muted mb-0">Unduh dokumen laporan performa digital harian, mingguan (post insight), dan bulanan dengan filter tanggal, cabang, dan periode dalam format PDF atau Excel (CSV).</p>
+        <p class="text-muted mb-0">Unduh dokumen laporan performa digital harian, mingguan (post insight), dan bulanan dengan filter tanggal, cabang, dan periode dalam format PDF atau Excel (.xlsx).</p>
     </div>
 
     <div class="row g-4">
@@ -193,7 +193,7 @@
                     </div>
 
                     <button type="submit" class="btn btn-success w-100 rounded-pill py-2.5 fw-bold shadow-sm">
-                        <i class="fas fa-file-excel me-2"></i> DOWNLOAD EXCEL (CSV)
+                        <i class="fas fa-file-excel me-2"></i> DOWNLOAD EXCEL (.XLSX)
                     </button>
                 </form>
             </div>

@@ -18,7 +18,7 @@
                 <i class="fas fa-file-pdf me-1.5"></i> Export PDF
             </button>
             <button type="button" class="btn btn-outline-success rounded-pill px-3 shadow-sm" id="btnExportExcel">
-                <i class="fas fa-file-excel me-1.5"></i> Export Excel (CSV)
+                <i class="fas fa-file-excel me-1.5"></i> Export Excel (.xlsx)
             </button>
             @endrole
             <button type="button" class="btn btn-yamaha-primary rounded-pill px-4 shadow-sm" id="btnTambahLaporan">

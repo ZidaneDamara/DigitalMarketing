@@ -214,37 +214,53 @@
         </table>
 
     @else
-        <h4>Ringkasan Monthly Insights</h4>
+        <h4>Detail & Ringkasan Monthly Insights</h4>
         <table>
             <thead>
                 <tr>
-                    <th style="width: 25px;">No</th>
+                    <th style="width: 20px;">No</th>
                     <th>Kode</th>
                     <th>Nama Cabang</th>
+                    <th class="text-center">Periode</th>
                     <th class="text-right">IG Views</th>
                     <th class="text-right">IG Reach</th>
+                    <th class="text-right">IG Acc Reached</th>
+                    <th class="text-right">IG Visits</th>
                     <th class="text-right">IG Followers</th>
+                    <th class="text-center">IG Gender (M / F)</th>
+                    <th class="text-center">IG Top Age & Cities</th>
                     <th class="text-right">FB Views</th>
+                    <th class="text-right">FB Followers</th>
                     <th class="text-right">TikTok Views</th>
-                    <th class="text-center">Google Rating</th>
+                    <th class="text-right">TikTok Followers</th>
+                    <th class="text-center">Google Rating & Reviews</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($monthlyInsights as $index => $row)
                 <tr>
                     <td class="text-center">{{ $index + 1 }}</td>
-                    <td>{{ $row->branch->kode ?? '-' }}</td>
+                    <td class="text-center">{{ $row->branch->kode ?? '-' }}</td>
                     <td>{{ $row->branch->nama_cabang ?? '-' }}</td>
+                    <td class="text-center">{{ $row->bulan }}/{{ $row->tahun }}</td>
                     <td class="text-right">{{ number_format($row->ig_views) }}</td>
                     <td class="text-right">{{ number_format($row->ig_reach) }}</td>
+                    <td class="text-right">{{ number_format($row->ig_accounts_reached) }}</td>
+                    <td class="text-right">{{ number_format($row->ig_profile_visits) }}</td>
                     <td class="text-right">{{ number_format($row->ig_total_followers) }}</td>
+                    <td class="text-center">M: {{ $row->ig_male_pct }}%<br>F: {{ $row->ig_female_pct }}%</td>
+                    <td class="text-center">
+                        <small>Usia: {{ $row->ig_top_age ?: '-' }}<br>Kota: {{ $row->ig_top_cities ?: '-' }}</small>
+                    </td>
+                    <td class="text-right">{{ number_format($row->fb_views) }}</td>
                     <td class="text-right">{{ number_format($row->fb_total_followers) }}</td>
                     <td class="text-right">{{ number_format($row->tiktok_views) }}</td>
-                    <td class="text-center">{{ $row->google_total_rating }} ({{ number_format($row->google_total_reviews) }})</td>
+                    <td class="text-right">{{ number_format($row->tiktok_total_followers) }}</td>
+                    <td class="text-center">{{ $row->google_total_rating }} ★<br><small>({{ number_format($row->google_total_reviews) }} Ulasan)</small></td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="9" class="text-center">Tidak ada data monthly insight pada filter ini.</td>
+                    <td colspan="16" class="text-center">Tidak ada data monthly insight pada filter ini.</td>
                 </tr>
                 @endforelse
             </tbody>

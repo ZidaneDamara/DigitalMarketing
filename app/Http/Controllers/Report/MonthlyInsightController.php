@@ -69,7 +69,20 @@ class MonthlyInsightController extends Controller
         foreach ($screenshotTypes as $inputName => $kategori) {
             if ($request->hasFile($inputName)) {
                 $file = $request->file($inputName);
-                $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
+
+                // Delete old file if updating existing screenshot
+                $existingSs = MonthlyInsightScreenshot::where('monthly_insight_id', $insight->id)
+                    ->where('kategori', $kategori)
+                    ->first();
+
+                if ($existingSs && $existingSs->file_path) {
+                    $cleanOld = preg_replace('#^/(storage|files|public)/#i', '', $existingSs->file_path);
+                    $cleanOld = preg_replace('#^(storage|files|public)/#i', '', $cleanOld);
+                    Storage::disk('public')->delete($cleanOld);
+                }
+
+                $extension = $file->getClientOriginalExtension() ?: 'jpg';
+                $filename = time() . '_' . uniqid() . '.' . strtolower($extension);
                 $path = $file->storeAs('screenshots', $filename, 'public');
 
                 // Update or create screenshot record
