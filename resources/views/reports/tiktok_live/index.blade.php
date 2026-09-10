@@ -138,37 +138,78 @@
         </div>
     </div>
 
-    <!-- Leaderboard Rangking Cabang & Information Insights Section -->
+    <!-- Leaderboard Rangking Cabang & Individu Section -->
     <div class="row g-3 mb-4">
-        <!-- Rangking Keaktifan Cabang -->
+        <!-- Rangking Keaktifan Cabang & Individu -->
         <div class="col-12 col-xl-8">
             <div class="card card-custom p-4 border-0 bg-white shadow-sm h-100">
-                <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-3 gap-2">
                     <div>
                         <h6 class="fw-bold text-dark m-0 d-flex align-items-center gap-2">
-                            <i class="fas fa-trophy text-warning"></i> Rangking Keaktifan Cabang (Jam & Sesi Live)
+                            <i class="fas fa-trophy text-warning"></i> Papan Peringkat (Leaderboard Live TikTok)
                         </h6>
-                        <small class="text-muted">Cabang paling rajin penyiaran dan durasi jam live terbanyak</small>
+                        <small class="text-muted">Rangking keaktifan cabang & penyiara individu (jam live & STU terbanyak)</small>
                     </div>
+                    <ul class="nav nav-pills rounded-pill bg-light p-1" id="leaderboardTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active rounded-pill px-3 py-1.5 small fw-semibold" id="tab-branch" data-bs-toggle="pill" data-bs-target="#content-branch" type="button" role="tab">
+                                <i class="fas fa-building me-1"></i> Rangking Cabang
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link rounded-pill px-3 py-1.5 small fw-semibold" id="tab-individual" data-bs-toggle="pill" data-bs-target="#content-individual" type="button" role="tab">
+                                <i class="fas fa-user-check me-1"></i> Rangking Individu Host
+                            </button>
+                        </li>
+                    </ul>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="bg-light">
-                            <tr>
-                                <th style="width: 14%;" class="text-center">Rangking</th>
-                                <th>Cabang</th>
-                                <th class="text-center">Total Sesi</th>
-                                <th class="text-center">Total Durasi</th>
-                                <th class="text-center">Total Penonton</th>
-                                <th class="text-center">Total STU</th>
-                            </tr>
-                        </thead>
-                        <tbody id="branchLeaderboardBody">
-                            <tr>
-                                <td colspan="6" class="text-center py-4 text-muted small">Memuat rangking cabang...</td>
-                            </tr>
-                        </tbody>
-                    </table>
+
+                <div class="tab-content" id="leaderboardTabContent">
+                    <!-- Tab Rangking Cabang -->
+                    <div class="tab-pane fade show active" id="content-branch" role="tabpanel">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th style="width: 14%;" class="text-center">Rangking</th>
+                                        <th>Cabang</th>
+                                        <th class="text-center">Total Sesi</th>
+                                        <th class="text-center">Total Durasi</th>
+                                        <th class="text-center">Total Penonton</th>
+                                        <th class="text-center">Total STU</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="branchLeaderboardBody">
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4 text-muted small">Memuat rangking cabang...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Tab Rangking Individu Host -->
+                    <div class="tab-pane fade" id="content-individual" role="tabpanel">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th style="width: 14%;" class="text-center">Rangking</th>
+                                        <th>Nama Host & Peran</th>
+                                        <th>Cabang</th>
+                                        <th class="text-center">Total Sesi</th>
+                                        <th class="text-center">Total Durasi</th>
+                                        <th class="text-center">Total STU</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="individualLeaderboardBody">
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4 text-muted small">Memuat rangking individu host...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -481,8 +522,9 @@
                         // Render Host Distribution
                         renderHostDistributionChart(res.host_distribution);
 
-                        // Render Leaderboard
+                        // Render Leaderboards
                         renderBranchLeaderboard(res.rankings);
+                        renderIndividualLeaderboard(res.individual_rankings);
 
                         // Update Decision Insights
                         $('#insight_avg_dur').text(res.insights.avg_duration);
@@ -632,6 +674,54 @@
                         <td class="text-center text-secondary font-monospace">${item.total_penonton.toLocaleString()}</td>
                         <td class="text-center">
                             <span class="badge bg-success bg-opacity-10 text-success border border-success px-2 py-1">${item.total_stu} Unit</span>
+                        </td>
+                    </tr>
+                `);
+            });
+        }
+
+        function renderIndividualLeaderboard(rankings) {
+            const tbody = $('#individualLeaderboardBody');
+            tbody.empty();
+
+            if (!rankings || rankings.length === 0) {
+                tbody.append(`<tr><td colspan="6" class="text-center py-4 text-muted small">Belum ada data penyiara individu untuk filter ini.</td></tr>`);
+                return;
+            }
+
+            rankings.forEach(function(item) {
+                let badgeRank = `<span class="badge bg-secondary rounded-circle" style="width: 26px; height: 26px; line-height: 18px;">${item.rank}</span>`;
+                if (item.rank === 1) {
+                    badgeRank = `<span class="badge bg-warning text-dark rounded-pill px-2.5 py-1 shadow-sm"><i class="fas fa-crown me-1"></i> #1 Top Host</span>`;
+                } else if (item.rank === 2) {
+                    badgeRank = `<span class="badge bg-secondary bg-opacity-25 text-dark rounded-pill px-2 py-1">#2</span>`;
+                } else if (item.rank === 3) {
+                    badgeRank = `<span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2 py-1">#3</span>`;
+                }
+
+                let badgeJabatan = 'bg-secondary';
+                if (item.jabatan === 'PIC Digital') badgeJabatan = 'bg-primary';
+                else if (item.jabatan === 'Sales Digital') badgeJabatan = 'bg-success';
+                else if (item.jabatan === 'Sales Reguler') badgeJabatan = 'bg-info text-dark';
+                else if (item.jabatan === 'Sales Counter') badgeJabatan = 'bg-warning text-dark';
+
+                tbody.append(`
+                    <tr>
+                        <td class="text-center">${badgeRank}</td>
+                        <td>
+                            <strong class="text-dark d-block">${item.nama_host}</strong>
+                            <span class="badge ${badgeJabatan} rounded-pill px-2 py-0.5" style="font-size: 0.7rem;">${item.jabatan}</span>
+                        </td>
+                        <td>
+                            <span class="fw-semibold text-dark">${item.branch_name}</span>
+                            <small class="text-muted d-block font-monospace">(${item.branch_code})</small>
+                        </td>
+                        <td class="text-center fw-bold text-dark">${item.total_sesi} Sesi</td>
+                        <td class="text-center">
+                            <span class="badge bg-primary bg-opacity-10 text-primary px-2.5 py-1 rounded-pill">${item.total_durasi_formatted}</span>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-success bg-opacity-10 text-success border border-success px-2.5 py-1">${item.total_stu} Unit</span>
                         </td>
                     </tr>
                 `);

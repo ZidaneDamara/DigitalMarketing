@@ -176,6 +176,43 @@ class TiktokLiveReportController extends Controller
                 ];
             });
 
+        // Individual Host Leaderboard Ranking
+        $hostRankQuery = TiktokLiveReport::query();
+        if ($request->filled('tanggal')) {
+            $hostRankQuery->where('tanggal_live', $request->tanggal);
+        } elseif ($request->filled('tanggal_awal') && $request->filled('tanggal_akhir')) {
+            $hostRankQuery->whereBetween('tanggal_live', [$request->tanggal_awal, $request->tanggal_akhir]);
+        }
+        if ($request->filled('branch_id')) {
+            $hostRankQuery->where('branch_id', $request->branch_id);
+        } elseif ($user->hasRole('PIC Digital Cabang')) {
+            $hostRankQuery->where('branch_id', $user->branch_id);
+        }
+
+        $individualRankings = $hostRankQuery
+            ->selectRaw('nama_host, jabatan, branch_id, COUNT(*) as total_sesi, SUM((durasi_jam * 60) + durasi_menit) as total_menit, SUM(jumlah_penonton) as total_penonton, SUM(stu) as total_stu')
+            ->groupBy('nama_host', 'jabatan', 'branch_id')
+            ->with('branch')
+            ->orderBy('total_menit', 'desc')
+            ->orderBy('total_stu', 'desc')
+            ->get()
+            ->map(function ($item, $index) {
+                $h = floor($item->total_menit / 60);
+                $m = $item->total_menit % 60;
+                return [
+                    'rank' => $index + 1,
+                    'nama_host' => $item->nama_host,
+                    'jabatan' => $item->jabatan,
+                    'branch_name' => $item->branch->nama_cabang ?? 'Cabang',
+                    'branch_code' => $item->branch->kode ?? '-',
+                    'total_sesi' => (int) $item->total_sesi,
+                    'total_durasi_formatted' => "{$h} Jam {$m} Mnt",
+                    'total_durasi_jam' => round($item->total_menit / 60, 1),
+                    'total_penonton' => (int) ($item->total_penonton ?? 0),
+                    'total_stu' => (int) ($item->total_stu ?? 0),
+                ];
+            });
+
         // Strategic Decision Insights
         $avgDurationMins = $totalSesi > 0 ? round($totalMenit / $totalSesi) : 0;
         $avgDurFormatted = floor($avgDurationMins / 60) > 0 
@@ -206,6 +243,7 @@ class TiktokLiveReportController extends Controller
             ],
             'host_distribution' => $hostDistribution,
             'rankings' => $branchRankings,
+            'individual_rankings' => $individualRankings,
             'insights' => [
                 'avg_duration' => $avgDurFormatted,
                 'top_host_role' => $topHostRole,
