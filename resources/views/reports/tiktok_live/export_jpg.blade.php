@@ -55,6 +55,8 @@
 
         .badge-jabatan-pic { background-color: #0d6efd; color: #fff; }
         .badge-jabatan-sales { background-color: #198754; color: #fff; }
+        .badge-jabatan-reguler { background-color: #0dcaf0; color: #000; }
+        .badge-jabatan-counter { background-color: #ffc107; color: #000; }
 
         .screenshot-container {
             background-color: #f8fafc;
@@ -121,6 +123,12 @@
                         <small class="text-muted d-block fw-semibold" style="font-size: 0.72rem;">JABATAN HOST</small>
                         @if($report->jabatan === 'PIC Digital')
                             <span class="badge badge-jabatan-pic rounded-pill px-3 py-1 mt-1">{{ $report->jabatan }}</span>
+                        @elseif($report->jabatan === 'Sales Digital')
+                            <span class="badge badge-jabatan-sales rounded-pill px-3 py-1 mt-1">{{ $report->jabatan }}</span>
+                        @elseif($report->jabatan === 'Sales Reguler')
+                            <span class="badge badge-jabatan-reguler rounded-pill px-3 py-1 mt-1">{{ $report->jabatan }}</span>
+                        @elseif($report->jabatan === 'Sales Counter')
+                            <span class="badge badge-jabatan-counter rounded-pill px-3 py-1 mt-1">{{ $report->jabatan }}</span>
                         @else
                             <span class="badge badge-jabatan-sales rounded-pill px-3 py-1 mt-1">{{ $report->jabatan }}</span>
                         @endif

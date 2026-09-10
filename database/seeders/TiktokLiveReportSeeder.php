@@ -21,8 +21,8 @@ class TiktokLiveReportSeeder extends Seeder
         $hosts = [
             ['nama' => 'Rina Setyowati', 'jabatan' => 'PIC Digital'],
             ['nama' => 'Budi Pratama', 'jabatan' => 'Sales Digital'],
-            ['nama' => 'Dewi Anggraini', 'jabatan' => 'Sales Digital'],
-            ['nama' => 'Siti Nurhaliza', 'jabatan' => 'PIC Digital'],
+            ['nama' => 'Dewi Anggraini', 'jabatan' => 'Sales Reguler'],
+            ['nama' => 'Siti Nurhaliza', 'jabatan' => 'Sales Counter'],
             ['nama' => 'Andi Wijaya', 'jabatan' => 'Sales Digital'],
         ];
 

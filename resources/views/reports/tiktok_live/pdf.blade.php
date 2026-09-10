@@ -70,6 +70,8 @@
         }
         .badge-pic { background-color: #0d6efd; }
         .badge-sales { background-color: #198754; }
+        .badge-sales-reguler { background-color: #0dcaf0; color: #000; }
+        .badge-sales-counter { background-color: #ffc107; color: #000; }
         .badge-stu { background-color: #198754; color: #fff; padding: 2px 6px; border-radius: 3px; font-weight: bold; }
         
         .screenshot-box {
@@ -123,8 +125,14 @@
                 <td class="value">: 
                     @if($report->jabatan === 'PIC Digital')
                         <span class="badge badge-pic">PIC Digital</span>
-                    @else
+                    @elseif($report->jabatan === 'Sales Digital')
                         <span class="badge badge-sales">Sales Digital</span>
+                    @elseif($report->jabatan === 'Sales Reguler')
+                        <span class="badge badge-sales-reguler">Sales Reguler</span>
+                    @elseif($report->jabatan === 'Sales Counter')
+                        <span class="badge badge-sales-counter">Sales Counter</span>
+                    @else
+                        <span class="badge badge-sales">{{ $report->jabatan }}</span>
                     @endif
                 </td>
             </tr>

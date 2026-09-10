@@ -18,6 +18,10 @@ class ExcelExporterService
      */
     public function export(string $type, $reports, array $meta = []): StreamedResponse
     {
+        if (!class_exists(\PhpOffice\PhpSpreadsheet\Spreadsheet::class)) {
+            return $this->exportFallbackCsv($type, $reports, $meta);
+        }
+
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setShowGridLines(true);
@@ -48,6 +52,100 @@ class ExcelExporterService
             $writer->save('php://output');
         }, $fileName, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Cache-Control' => 'max-age=0',
+        ]);
+    }
+
+    /**
+     * Fallback CSV Exporter if PhpSpreadsheet package is missing on host environment.
+     */
+    private function exportFallbackCsv(string $type, $reports, array $meta = []): StreamedResponse
+    {
+        $titleType = ucfirst($type);
+        $fileName = "DMPMS_{$titleType}_Report_" . date('Ymd_His') . ".csv";
+
+        return response()->streamDownload(function () use ($type, $reports) {
+            $handle = fopen('php://output', 'w');
+            // Write UTF-8 BOM for Microsoft Excel compatibility
+            fwrite($handle, "\xEF\xBB\xBF");
+
+            if ($type === 'monthly') {
+                fputcsv($handle, [
+                    'No', 'Kode Cabang', 'Nama Cabang', 'Tahun', 'Bulan',
+                    'IG Views', 'IG Reach', 'IG Accounts Reached', 'IG Profile Visits', 'IG Followers',
+                    'IG Male %', 'IG Female %', 'IG Top Age', 'IG Top Cities',
+                    'FB Views', 'FB Followers', 'TikTok Views', 'TikTok Followers',
+                    'Google Rating', 'Google Reviews'
+                ]);
+                foreach ($reports as $idx => $r) {
+                    fputcsv($handle, [
+                        $idx + 1, $r->branch->kode ?? '-', $r->branch->nama_cabang ?? '-', $r->tahun, $r->bulan,
+                        $r->ig_views, $r->ig_reach, $r->ig_accounts_reached, $r->ig_profile_visits, $r->ig_total_followers,
+                        $r->ig_male_pct, $r->ig_female_pct, $r->ig_top_age, $r->ig_top_cities,
+                        $r->fb_views, $r->fb_total_followers, $r->tiktok_views, $r->tiktok_total_followers,
+                        $r->google_total_rating, $r->google_total_reviews
+                    ]);
+                }
+            } elseif ($type === 'daily') {
+                fputcsv($handle, [
+                    'No', 'Kode Cabang', 'Nama Cabang', 'Tanggal', 
+                    'IG Feed', 'IG Reels', 'IG Story', 'IG Followers (+)',
+                    'FB Post', 'FB Marketplace', 'FB Followers (+)',
+                    'TikTok Post', 'TikTok Live', 'TikTok Followers (+)',
+                    'Google Rating', 'Google Review (+)', 'Catatan'
+                ]);
+                foreach ($reports as $idx => $r) {
+                    fputcsv($handle, [
+                        $idx + 1, $r->branch->kode ?? '-', $r->branch->nama_cabang ?? '-',
+                        $r->tanggal ? $r->tanggal->format('Y-m-d') : '-',
+                        $r->ig_feed, $r->ig_reels, $r->ig_story, $r->ig_followers_gained,
+                        $r->fb_post, $r->fb_marketplace, $r->fb_followers_gained,
+                        $r->tiktok_post, $r->tiktok_live, $r->tiktok_followers_gained,
+                        $r->google_rating, $r->google_review_gained, $r->catatan ?? '-'
+                    ]);
+                }
+            } elseif ($type === 'weekly') {
+                fputcsv($handle, [
+                    'No', 'Kode Cabang', 'Nama Cabang', 'Tanggal Post', 'Minggu Ke', 'Tahun', 'Link Content', 
+                    'Views', 'Account Reached', 'Interaksi Followers', 'Interaksi Non-Followers', 'Total Interaksi',
+                    'Likes', 'Shares', 'Saves', 'Comments', 'Reposts',
+                    'Profile Visits', 'External Link Taps', 'Follows',
+                    'Source Feed (%)', 'Source Profile (%)', 'Source Stories (%)',
+                    'Gender Men (%)', 'Gender Women (%)', 'Top Country', 'Top Age', 'Catatan'
+                ]);
+                foreach ($reports as $idx => $r) {
+                    fputcsv($handle, [
+                        $idx + 1, $r->branch->kode ?? '-', $r->branch->nama_cabang ?? '-',
+                        $r->tanggal_post ? $r->tanggal_post->format('Y-m-d') : '-',
+                        $r->minggu_ke, $r->tahun, $r->link_content,
+                        $r->views, $r->account_reached, $r->interactions_followers, $r->interactions_non_followers,
+                        $r->total_interactions, $r->likes, $r->shares, $r->saves, $r->comments, $r->reposts,
+                        $r->profile_visits, $r->external_link_taps, $r->follows,
+                        $r->source_feed_pct, $r->source_profile_pct, $r->source_stories_pct,
+                        $r->gender_men_pct, $r->gender_women_pct, $r->top_country, $r->top_age, $r->catatan ?? '-'
+                    ]);
+                }
+            } else {
+                // tiktok_live
+                fputcsv($handle, [
+                    'No', 'Kode Cabang', 'Nama Cabang', 'Tanggal Live', 'Nama Host',
+                    'Jabatan Host', 'Durasi Jam', 'Durasi Menit', 'Total Menit', 'Penonton',
+                    'Likes', 'Diinput Oleh', 'Bukti Screenshot', 'Catatan'
+                ]);
+                foreach ($reports as $idx => $r) {
+                    fputcsv($handle, [
+                        $idx + 1, $r->branch->kode ?? '-', $r->branch->nama_cabang ?? '-',
+                        $r->tanggal_live ? $r->tanggal_live->format('Y-m-d') : '-',
+                        $r->nama_host ?? '-', $r->jabatan ?? '-', $r->durasi_jam ?? 0, $r->durasi_menit ?? 0,
+                        $r->total_minutes ?? 0, $r->jumlah_penonton ?? 0, $r->jumlah_like ?? 0,
+                        $r->user->name ?? '-', $r->bukti_screenshot_url ?? '-', $r->catatan ?? '-'
+                    ]);
+                }
+            }
+
+            fclose($handle);
+        }, $fileName, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
             'Cache-Control' => 'max-age=0',
         ]);
     }

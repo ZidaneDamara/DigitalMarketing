@@ -207,6 +207,8 @@
                             <select name="jabatan" id="form_jabatan" class="form-select rounded-3 shadow-none" required>
                                 <option value="PIC Digital">PIC Digital</option>
                                 <option value="Sales Digital">Sales Digital</option>
+                                <option value="Sales Reguler">Sales Reguler</option>
+                                <option value="Sales Counter">Sales Counter</option>
                             </select>
                         </div>
 
@@ -314,7 +316,11 @@
                     return `<strong>${data}</strong>`;
                 }},
                 { data: 'jabatan', name: 'jabatan', render: function(data) {
-                    const badgeClass = data === 'PIC Digital' ? 'bg-primary' : 'bg-success';
+                    let badgeClass = 'bg-secondary';
+                    if (data === 'PIC Digital') badgeClass = 'bg-primary';
+                    else if (data === 'Sales Digital') badgeClass = 'bg-success';
+                    else if (data === 'Sales Reguler') badgeClass = 'bg-info text-dark';
+                    else if (data === 'Sales Counter') badgeClass = 'bg-warning text-dark';
                     return `<span class="badge ${badgeClass} rounded-pill px-2 py-1">${data}</span>`;
                 }},
                 { data: 'durasi_formatted', name: 'durasi_formatted', render: function(data) {

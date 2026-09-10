@@ -16,7 +16,7 @@ class TiktokLiveReportRequest extends FormRequest
         $rules = [
             'branch_id' => 'required|exists:branches,id',
             'nama_host' => 'required|string|max:255',
-            'jabatan' => 'required|in:PIC Digital,Sales Digital',
+            'jabatan' => 'required|in:PIC Digital,Sales Digital,Sales Reguler,Sales Counter',
             'tanggal_live' => 'required|date',
             'durasi_jam' => 'required|integer|min:0|max:24',
             'durasi_menit' => 'required|integer|min:0|max:59',
@@ -43,7 +43,7 @@ class TiktokLiveReportRequest extends FormRequest
             'branch_id.required' => 'Cabang wajib dipilih.',
             'nama_host.required' => 'Nama host / orang yang live wajib diisi.',
             'jabatan.required' => 'Jabatan wajib dipilih.',
-            'jabatan.in' => 'Jabatan harus PIC Digital atau Sales Digital.',
+            'jabatan.in' => 'Jabatan harus PIC Digital, Sales Digital, Sales Reguler, atau Sales Counter.',
             'tanggal_live.required' => 'Tanggal live wajib diisi.',
             'durasi_jam.required' => 'Durasi jam wajib diisi.',
             'durasi_menit.required' => 'Durasi menit wajib diisi.',

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('branch_id')->constrained('branches')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('nama_host');
-            $table->enum('jabatan', ['PIC Digital', 'Sales Digital']);
+            $table->string('jabatan');
             $table->date('tanggal_live');
             $table->integer('durasi_jam')->default(0);
             $table->integer('durasi_menit')->default(0);
