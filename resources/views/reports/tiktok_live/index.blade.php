@@ -37,7 +37,7 @@
                     </div>
                     <div>
                         <div class="text-muted small fw-semibold text-uppercase" style="font-size: 0.7rem;">Total Sesi</div>
-                        <h5 class="fw-extrabold text-dark m-0">{{ number_format($totalSesi) }}</h5>
+                        <h5 class="fw-extrabold text-dark m-0" id="stat_total_sesi">{{ number_format($totalSesi) }}</h5>
                     </div>
                 </div>
             </div>
@@ -51,7 +51,7 @@
                     </div>
                     <div>
                         <div class="text-muted small fw-semibold text-uppercase" style="font-size: 0.7rem;">Total Durasi</div>
-                        <h5 class="fw-extrabold text-dark m-0">{{ $totalJamFormat }}</h5>
+                        <h5 class="fw-extrabold text-dark m-0" id="stat_total_durasi">{{ $totalJamFormat }}</h5>
                     </div>
                 </div>
             </div>
@@ -65,7 +65,7 @@
                     </div>
                     <div>
                         <div class="text-muted small fw-semibold text-uppercase" style="font-size: 0.7rem;">Total Penonton</div>
-                        <h5 class="fw-extrabold text-dark m-0">{{ number_format($totalPenonton) }}</h5>
+                        <h5 class="fw-extrabold text-dark m-0" id="stat_total_penonton">{{ number_format($totalPenonton) }}</h5>
                     </div>
                 </div>
             </div>
@@ -79,7 +79,7 @@
                     </div>
                     <div>
                         <div class="text-muted small fw-semibold text-uppercase" style="font-size: 0.7rem;">Total Likes</div>
-                        <h5 class="fw-extrabold text-dark m-0">{{ number_format($totalLikes) }}</h5>
+                        <h5 class="fw-extrabold text-dark m-0" id="stat_total_likes">{{ number_format($totalLikes) }}</h5>
                     </div>
                 </div>
             </div>
@@ -93,7 +93,116 @@
                     </div>
                     <div>
                         <div class="text-muted small fw-semibold text-uppercase" style="font-size: 0.7rem;">Total STU</div>
-                        <h5 class="fw-extrabold text-success m-0">{{ number_format($totalStu) }} Unit</h5>
+                        <h5 class="fw-extrabold text-success m-0" id="stat_total_stu">{{ number_format($totalStu) }} Unit</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Charts & Decision Insights Section -->
+    <div class="row g-3 mb-4">
+        <!-- Line Chart: Progress Live TikTok -->
+        <div class="col-12 col-xl-8">
+            <div class="card card-custom p-4 border-0 bg-white shadow-sm h-100">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div>
+                        <h6 class="fw-bold text-dark m-0 d-flex align-items-center gap-2">
+                            <i class="fas fa-chart-line text-danger"></i> Tren & Progres Sesi Live TikTok
+                        </h6>
+                        <small class="text-muted">Grafik tren harian sesi live dan total penonton per tanggal</small>
+                    </div>
+                    <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-1.5 rounded-pill fw-semibold small">
+                        <i class="fas fa-sync-alt me-1 spinner-border spinner-border-sm d-none" id="chartLoader" style="width: 0.8rem; height: 0.8rem;"></i> Live Analytics
+                    </span>
+                </div>
+                <div style="position: relative; height: 280px;">
+                    <canvas id="liveProgressChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Donut Chart: Distribusi Jabatan Host -->
+        <div class="col-12 col-xl-4">
+            <div class="card card-custom p-4 border-0 bg-white shadow-sm h-100">
+                <div class="mb-3">
+                    <h6 class="fw-bold text-dark m-0 d-flex align-items-center gap-2">
+                        <i class="fas fa-chart-pie text-primary"></i> Distribusi Peran Host
+                    </h6>
+                    <small class="text-muted">Kontribusi penyiaran per Jabatan Host</small>
+                </div>
+                <div style="position: relative; height: 280px;">
+                    <canvas id="hostDistributionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard Rangking Cabang & Information Insights Section -->
+    <div class="row g-3 mb-4">
+        <!-- Rangking Keaktifan Cabang -->
+        <div class="col-12 col-xl-8">
+            <div class="card card-custom p-4 border-0 bg-white shadow-sm h-100">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div>
+                        <h6 class="fw-bold text-dark m-0 d-flex align-items-center gap-2">
+                            <i class="fas fa-trophy text-warning"></i> Rangking Keaktifan Cabang (Jam & Sesi Live)
+                        </h6>
+                        <small class="text-muted">Cabang paling rajin penyiaran dan durasi jam live terbanyak</small>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th style="width: 14%;" class="text-center">Rangking</th>
+                                <th>Cabang</th>
+                                <th class="text-center">Total Sesi</th>
+                                <th class="text-center">Total Durasi</th>
+                                <th class="text-center">Total Penonton</th>
+                                <th class="text-center">Total STU</th>
+                            </tr>
+                        </thead>
+                        <tbody id="branchLeaderboardBody">
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-muted small">Memuat rangking cabang...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decision Support Insights Card -->
+        <div class="col-12 col-xl-4">
+            <div class="card card-custom p-4 border-0 bg-white shadow-sm h-100">
+                <div class="mb-3">
+                    <h6 class="fw-bold text-dark m-0 d-flex align-items-center gap-2">
+                        <i class="fas fa-lightbulb text-warning"></i> Informasi Pengambilan Keputusan
+                    </h6>
+                    <small class="text-muted">Wawasan performa & efektivitas strategi penyiaran</small>
+                </div>
+
+                <div class="d-flex flex-column gap-3 mt-2">
+                    <div class="p-3 bg-light rounded-3 border-start border-4 border-primary">
+                        <div class="text-muted small fw-semibold text-uppercase" style="font-size: 0.72rem;">Rata-Rata Durasi Per Sesi Live</div>
+                        <h5 class="fw-extrabold text-primary mb-1" id="insight_avg_dur">-</h5>
+                        <div class="small text-muted" style="font-size: 0.78rem;">Durasi ideal untuk meningkatkan viewer engagement & keterikatan penonton.</div>
+                    </div>
+
+                    <div class="p-3 bg-light rounded-3 border-start border-4 border-success">
+                        <div class="text-muted small fw-semibold text-uppercase" style="font-size: 0.72rem;">Peran Host Paling Active Live</div>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h5 class="fw-extrabold text-success mb-1" id="insight_top_host">-</h5>
+                            <span class="badge bg-success rounded-pill px-2.5 py-1" id="insight_top_host_pct">0%</span>
+                        </div>
+                        <div class="small text-muted" style="font-size: 0.78rem;">Kelompok tim sales/PIC yang memberikan kontribusi penyiaran terbanyak.</div>
+                    </div>
+
+                    <div class="p-3 bg-light rounded-3 border-start border-4 border-warning">
+                        <div class="text-muted small fw-semibold text-uppercase" style="font-size: 0.72rem;">Efisiensi Konversi STU ke Penonton</div>
+                        <h5 class="fw-extrabold text-warning mb-1" id="insight_stu_ratio">0 Unit</h5>
+                        <div class="small text-muted" style="font-size: 0.78rem;">Perkiraan konversi STU (Sales to Unit) per 1.000 penonton live.</div>
                     </div>
                 </div>
             </div>
@@ -341,9 +450,198 @@
             }
         });
 
+        let liveProgressChartInstance = null;
+        let hostDistributionChartInstance = null;
+
+        function fetchAnalyticsData() {
+            $('#chartLoader').removeClass('d-none');
+
+            $.ajax({
+                url: "{{ route('reports.tiktok-live.index') }}",
+                method: "GET",
+                data: {
+                    action: 'get_analytics',
+                    branch_id: $('#filter_branch').val(),
+                    tanggal: $('#filter_tanggal').val(),
+                    tanggal_akhir: $('#filter_tanggal_akhir').val()
+                },
+                success: function(res) {
+                    $('#chartLoader').addClass('d-none');
+                    if (res.success) {
+                        // Update Top Card Metrics
+                        $('#stat_total_sesi').text(res.stats.total_sesi);
+                        $('#stat_total_durasi').text(res.stats.total_durasi);
+                        $('#stat_total_penonton').text(res.stats.total_penonton);
+                        $('#stat_total_likes').text(res.stats.total_likes);
+                        $('#stat_total_stu').text(res.stats.total_stu);
+
+                        // Render Line Chart
+                        renderLiveProgressChart(res.chart);
+
+                        // Render Host Distribution
+                        renderHostDistributionChart(res.host_distribution);
+
+                        // Render Leaderboard
+                        renderBranchLeaderboard(res.rankings);
+
+                        // Update Decision Insights
+                        $('#insight_avg_dur').text(res.insights.avg_duration);
+                        $('#insight_top_host').text(res.insights.top_host_role);
+                        $('#insight_top_host_pct').text(res.insights.top_host_pct);
+                        $('#insight_stu_ratio').text(res.insights.stu_per_thousand + ' Unit / 1k Viewers');
+                    }
+                },
+                error: function() {
+                    $('#chartLoader').addClass('d-none');
+                }
+            });
+        }
+
+        function renderLiveProgressChart(chartData) {
+            const canvas = document.getElementById('liveProgressChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            if (liveProgressChartInstance) {
+                liveProgressChartInstance.destroy();
+            }
+
+            const hasData = chartData.labels && chartData.labels.length > 0;
+
+            liveProgressChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: hasData ? chartData.labels : ['Tidak Ada Data'],
+                    datasets: [
+                        {
+                            label: 'Sesi Live',
+                            data: hasData ? chartData.sesi : [0],
+                            borderColor: '#E60012',
+                            backgroundColor: 'rgba(230, 0, 18, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: true,
+                            yAxisID: 'ySesi'
+                        },
+                        {
+                            label: 'Total Viewer (Penonton)',
+                            data: hasData ? chartData.penonton : [0],
+                            borderColor: '#198754',
+                            backgroundColor: 'rgba(25, 135, 84, 0.05)',
+                            borderWidth: 2,
+                            borderDash: [4, 4],
+                            tension: 0.3,
+                            fill: false,
+                            yAxisID: 'yPenonton'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        ySesi: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: { display: true, text: 'Sesi Live' },
+                            beginAtZero: true,
+                            ticks: { precision: 0 }
+                        },
+                        yPenonton: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: { display: true, text: 'Viewer' },
+                            beginAtZero: true,
+                            grid: { drawOnChartArea: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'top' }
+                    }
+                }
+            });
+        }
+
+        function renderHostDistributionChart(hostData) {
+            const canvas = document.getElementById('hostDistributionChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            if (hostDistributionChartInstance) {
+                hostDistributionChartInstance.destroy();
+            }
+
+            const labels = Object.keys(hostData);
+            const dataValues = Object.values(hostData);
+
+            hostDistributionChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: dataValues,
+                        backgroundColor: ['#0d6efd', '#198754', '#0dcaf0', '#ffc107']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        function renderBranchLeaderboard(rankings) {
+            const tbody = $('#branchLeaderboardBody');
+            tbody.empty();
+
+            if (!rankings || rankings.length === 0) {
+                tbody.append(`<tr><td colspan="6" class="text-center py-4 text-muted small">Belum ada data aktivitas live untuk filter ini.</td></tr>`);
+                return;
+            }
+
+            rankings.forEach(function(item) {
+                let badgeRank = `<span class="badge bg-secondary rounded-circle" style="width: 26px; height: 26px; line-height: 18px;">${item.rank}</span>`;
+                if (item.rank === 1) {
+                    badgeRank = `<span class="badge bg-warning text-dark rounded-pill px-2.5 py-1 shadow-sm"><i class="fas fa-crown me-1"></i> #1 Top Streamer</span>`;
+                } else if (item.rank === 2) {
+                    badgeRank = `<span class="badge bg-secondary bg-opacity-25 text-dark rounded-pill px-2 py-1">#2</span>`;
+                } else if (item.rank === 3) {
+                    badgeRank = `<span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2 py-1">#3</span>`;
+                }
+
+                tbody.append(`
+                    <tr>
+                        <td class="text-center">${badgeRank}</td>
+                        <td>
+                            <strong class="text-dark d-block">${item.branch_name}</strong>
+                            <span class="text-muted small">Kode: ${item.branch_code}</span>
+                        </td>
+                        <td class="text-center fw-bold text-dark">${item.total_sesi} Sesi</td>
+                        <td class="text-center">
+                            <span class="badge bg-primary bg-opacity-10 text-primary px-2.5 py-1 rounded-pill">${item.total_durasi_formatted}</span>
+                        </td>
+                        <td class="text-center text-secondary font-monospace">${item.total_penonton.toLocaleString()}</td>
+                        <td class="text-center">
+                            <span class="badge bg-success bg-opacity-10 text-success border border-success px-2 py-1">${item.total_stu} Unit</span>
+                        </td>
+                    </tr>
+                `);
+            });
+        }
+
         // Filter events
         $('#filter_branch, #filter_tanggal, #filter_tanggal_akhir').on('change', function() {
             table.draw();
+            fetchAnalyticsData();
         });
 
         $('#btnResetFilter').on('click', function() {
@@ -353,7 +651,11 @@
                 $('#filter_branch').val('');
             @endif
             table.draw();
+            fetchAnalyticsData();
         });
+
+        // Initial Analytics Load
+        fetchAnalyticsData();
 
         // Global Export Handlers
         $('#btnExportPdf').on('click', function() {
