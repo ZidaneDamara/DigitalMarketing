@@ -190,7 +190,7 @@ class TiktokLiveReportController extends Controller
         }
 
         $individualRankings = $hostRankQuery
-            ->selectRaw('nama_host, jabatan, branch_id, COUNT(*) as total_sesi, SUM((durasi_jam * 60) + durasi_menit) as total_menit, SUM(jumlah_penonton) as total_penonton, SUM(stu) as total_stu')
+            ->selectRaw('nama_host, jabatan, branch_id, COUNT(*) as total_sesi, COUNT(DISTINCT tanggal_live) as total_hari, SUM((durasi_jam * 60) + durasi_menit) as total_menit, SUM(jumlah_penonton) as total_penonton, SUM(stu) as total_stu')
             ->groupBy('nama_host', 'jabatan', 'branch_id')
             ->with('branch')
             ->orderBy('total_menit', 'desc')
@@ -199,15 +199,33 @@ class TiktokLiveReportController extends Controller
             ->map(function ($item, $index) {
                 $h = floor($item->total_menit / 60);
                 $m = $item->total_menit % 60;
+                $totalSesi = (int) ($item->total_sesi ?? 1);
+                $totalHari = (int) ($item->total_hari ?? 1);
+
+                $avgMinPerHari = $totalHari > 0 ? ($item->total_menit / $totalHari) : 0;
+                $avgHoursPerHari = round($avgMinPerHari / 60, 2);
+                $avgMinPerSesi = $totalSesi > 0 ? ($item->total_menit / $totalSesi) : 0;
+                $avgHoursPerSesi = round($avgMinPerSesi / 60, 2);
+
+                $hHari = floor($avgMinPerHari / 60);
+                $mHari = round($avgMinPerHari % 60);
+                $avgHariFormatted = $hHari > 0 ? "{$hHari}j {$mHari}m / hari" : "{$mHari}m / hari";
+
                 return [
                     'rank' => $index + 1,
                     'nama_host' => $item->nama_host,
                     'jabatan' => $item->jabatan,
                     'branch_name' => $item->branch->nama_cabang ?? 'Cabang',
                     'branch_code' => $item->branch->kode ?? '-',
-                    'total_sesi' => (int) $item->total_sesi,
+                    'total_sesi' => $totalSesi,
+                    'total_hari' => $totalHari,
                     'total_durasi_formatted' => "{$h} Jam {$m} Mnt",
                     'total_durasi_jam' => round($item->total_menit / 60, 1),
+                    'avg_jam_per_hari' => $avgHoursPerHari,
+                    'avg_jam_per_hari_formatted' => number_format($avgHoursPerHari, 2) . ' Jam/Hari',
+                    'avg_hari_detail' => $avgHariFormatted,
+                    'avg_jam_per_sesi' => $avgHoursPerSesi,
+                    'avg_jam_per_sesi_formatted' => number_format($avgHoursPerSesi, 2) . ' Jam/Sesi',
                     'total_penonton' => (int) ($item->total_penonton ?? 0),
                     'total_stu' => (int) ($item->total_stu ?? 0),
                 ];
@@ -218,6 +236,10 @@ class TiktokLiveReportController extends Controller
         $avgDurFormatted = floor($avgDurationMins / 60) > 0 
             ? floor($avgDurationMins / 60) . ' Jam ' . ($avgDurationMins % 60) . ' Mnt'
             : $avgDurationMins . ' Mnt';
+
+        $avgHostHoursPerDay = $individualRankings->count() > 0 
+            ? round($individualRankings->avg('avg_jam_per_hari'), 2)
+            : 0;
 
         arsort($hostDistribution);
         $topHostRole = key($hostDistribution) ?? '-';
@@ -246,6 +268,7 @@ class TiktokLiveReportController extends Controller
             'individual_rankings' => $individualRankings,
             'insights' => [
                 'avg_duration' => $avgDurFormatted,
+                'avg_host_hours_per_day' => number_format($avgHostHoursPerDay, 2) . ' Jam/Hari',
                 'top_host_role' => $topHostRole,
                 'top_host_pct' => $topHostPct . '%',
                 'stu_per_thousand' => $stuPerThousandViewers,

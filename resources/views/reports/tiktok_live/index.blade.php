@@ -158,7 +158,7 @@
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link rounded-pill px-3 py-1.5 small fw-semibold" id="tab-individual" data-bs-toggle="pill" data-bs-target="#content-individual" type="button" role="tab">
-                                <i class="fas fa-user-check me-1"></i> Rangking Individu Host
+                                <i class="fas fa-user-clock me-1"></i> Avg Jam/Hari Live Per Host
                             </button>
                         </li>
                     </ul>
@@ -171,7 +171,7 @@
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="bg-light">
                                     <tr>
-                                        <th style="width: 14%;" class="text-center">Rangking</th>
+                                        <th style="width: 12%;" class="text-center">Rangking</th>
                                         <th>Cabang</th>
                                         <th class="text-center">Total Sesi</th>
                                         <th class="text-center">Total Durasi</th>
@@ -188,23 +188,26 @@
                         </div>
                     </div>
 
-                    <!-- Tab Rangking Individu Host -->
+                    <!-- Tab Rangking & Average Jam/Hari Live Per Individu Host -->
                     <div class="tab-pane fade" id="content-individual" role="tabpanel">
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="bg-light">
                                     <tr>
-                                        <th style="width: 14%;" class="text-center">Rangking</th>
+                                        <th style="width: 8%;" class="text-center">Rangking</th>
                                         <th>Nama Host & Peran</th>
                                         <th>Cabang</th>
                                         <th class="text-center">Total Sesi</th>
+                                        <th class="text-center">Hari Aktif</th>
                                         <th class="text-center">Total Durasi</th>
+                                        <th class="text-center text-danger"><i class="fas fa-clock me-1"></i>Avg Jam / Hari Live</th>
+                                        <th class="text-center text-primary">Avg Jam / Sesi</th>
                                         <th class="text-center">Total STU</th>
                                     </tr>
                                 </thead>
                                 <tbody id="individualLeaderboardBody">
                                     <tr>
-                                        <td colspan="6" class="text-center py-4 text-muted small">Memuat rangking individu host...</td>
+                                        <td colspan="9" class="text-center py-4 text-muted small">Memuat data rata-rata jam live per individu host...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -225,10 +228,16 @@
                 </div>
 
                 <div class="d-flex flex-column gap-3 mt-2">
+                    <div class="p-3 bg-light rounded-3 border-start border-4 border-danger">
+                        <div class="text-muted small fw-semibold text-uppercase" style="font-size: 0.72rem;">Rata-Rata Jam Live / Hari (Per Host)</div>
+                        <h5 class="fw-extrabold text-danger mb-1" id="insight_avg_host_hours">-</h5>
+                        <div class="small text-muted" style="font-size: 0.78rem;">Rata-rata alokasi jam penyiaran harian per penyiara aktif.</div>
+                    </div>
+
                     <div class="p-3 bg-light rounded-3 border-start border-4 border-primary">
                         <div class="text-muted small fw-semibold text-uppercase" style="font-size: 0.72rem;">Rata-Rata Durasi Per Sesi Live</div>
                         <h5 class="fw-extrabold text-primary mb-1" id="insight_avg_dur">-</h5>
-                        <div class="small text-muted" style="font-size: 0.78rem;">Durasi ideal untuk meningkatkan viewer engagement & keterikatan penonton.</div>
+                        <div class="small text-muted" style="font-size: 0.78rem;">Durasi ideal untuk meningkatkan viewer engagement penonton.</div>
                     </div>
 
                     <div class="p-3 bg-light rounded-3 border-start border-4 border-success">
@@ -528,6 +537,7 @@
 
                         // Update Decision Insights
                         $('#insight_avg_dur').text(res.insights.avg_duration);
+                        $('#insight_avg_host_hours').text(res.insights.avg_host_hours_per_day);
                         $('#insight_top_host').text(res.insights.top_host_role);
                         $('#insight_top_host_pct').text(res.insights.top_host_pct);
                         $('#insight_stu_ratio').text(res.insights.stu_per_thousand + ' Unit / 1k Viewers');
@@ -685,7 +695,7 @@
             tbody.empty();
 
             if (!rankings || rankings.length === 0) {
-                tbody.append(`<tr><td colspan="6" class="text-center py-4 text-muted small">Belum ada data penyiara individu untuk filter ini.</td></tr>`);
+                tbody.append(`<tr><td colspan="9" class="text-center py-4 text-muted small">Belum ada data penyiara individu untuk filter ini.</td></tr>`);
                 return;
             }
 
@@ -718,7 +728,19 @@
                         </td>
                         <td class="text-center fw-bold text-dark">${item.total_sesi} Sesi</td>
                         <td class="text-center">
-                            <span class="badge bg-primary bg-opacity-10 text-primary px-2.5 py-1 rounded-pill">${item.total_durasi_formatted}</span>
+                            <span class="badge bg-light text-dark border px-2.5 py-1 rounded-pill"><i class="fas fa-calendar-alt text-success me-1"></i>${item.total_hari} Hari</span>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-secondary bg-opacity-10 text-dark px-2.5 py-1 rounded-pill">${item.total_durasi_formatted}</span>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger px-2.5 py-1 fw-bold">
+                                <i class="fas fa-clock me-1"></i>${item.avg_jam_per_hari_formatted}
+                            </span>
+                            <small class="d-block text-muted" style="font-size: 0.68rem;">(${item.avg_hari_detail})</small>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-primary bg-opacity-10 text-primary px-2 py-1">${item.avg_jam_per_sesi_formatted}</span>
                         </td>
                         <td class="text-center">
                             <span class="badge bg-success bg-opacity-10 text-success border border-success px-2.5 py-1">${item.total_stu} Unit</span>
