@@ -61,10 +61,13 @@ class ExportController extends Controller
             if ($branchId) {
                 $query->where('branch_id', $branchId);
             }
-            if ($tanggal) {
-                $query->where('tanggal_live', $tanggal);
-            } elseif ($tanggalAwal && $tanggalAkhir) {
-                $query->whereBetween('tanggal_live', [$tanggalAwal, $tanggalAkhir]);
+            $start = $tanggalAwal ?: $tanggal;
+            if ($start && $tanggalAkhir) {
+                $query->whereBetween('tanggal_live', [$start, $tanggalAkhir]);
+            } elseif ($start) {
+                $query->where('tanggal_live', $start);
+            } elseif ($tanggalAkhir) {
+                $query->where('tanggal_live', '<=', $tanggalAkhir);
             } else {
                 $query->whereYear('tanggal_live', $tahun)->whereMonth('tanggal_live', $bulan);
             }
@@ -148,10 +151,13 @@ class ExportController extends Controller
             if ($branchId) {
                 $query->where('branch_id', $branchId);
             }
-            if ($tanggal) {
-                $query->where('tanggal_live', $tanggal);
-            } elseif ($tanggalAwal && $tanggalAkhir) {
-                $query->whereBetween('tanggal_live', [$tanggalAwal, $tanggalAkhir]);
+            $start = $tanggalAwal ?: $tanggal;
+            if ($start && $tanggalAkhir) {
+                $query->whereBetween('tanggal_live', [$start, $tanggalAkhir]);
+            } elseif ($start) {
+                $query->where('tanggal_live', $start);
+            } elseif ($tanggalAkhir) {
+                $query->where('tanggal_live', '<=', $tanggalAkhir);
             } else {
                 $query->whereYear('tanggal_live', $tahun)->whereMonth('tanggal_live', $bulan);
             }

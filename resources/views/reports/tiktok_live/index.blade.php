@@ -277,13 +277,13 @@
             </div>
 
             <div class="col-6 col-md-3">
-                <label class="form-label fw-semibold small text-muted">Tanggal Spesifik</label>
-                <input type="date" id="filter_tanggal" class="form-control rounded-3 shadow-none">
+                <label class="form-label fw-semibold small text-muted">Tanggal Awal / Spesifik</label>
+                <input type="date" id="filter_tanggal" class="form-control rounded-3 shadow-none" value="{{ \Carbon\Carbon::now()->startOfMonth()->format('Y-m-d') }}">
             </div>
 
             <div class="col-6 col-md-3">
                 <label class="form-label fw-semibold small text-muted">Rentang S/D Tanggal</label>
-                <input type="date" id="filter_tanggal_akhir" class="form-control rounded-3 shadow-none">
+                <input type="date" id="filter_tanggal_akhir" class="form-control rounded-3 shadow-none" value="{{ \Carbon\Carbon::now()->endOfMonth()->format('Y-m-d') }}">
             </div>
 
             <div class="col-12 col-md-2 d-flex align-items-end">
@@ -463,7 +463,7 @@
                 url: "{{ route('reports.tiktok-live.index') }}",
                 data: function(d) {
                     d.branch_id = $('#filter_branch').val();
-                    d.tanggal = $('#filter_tanggal').val();
+                    d.tanggal_awal = $('#filter_tanggal').val();
                     d.tanggal_akhir = $('#filter_tanggal_akhir').val();
                 }
             },
@@ -512,7 +512,7 @@
                 data: {
                     action: 'get_analytics',
                     branch_id: $('#filter_branch').val(),
-                    tanggal: $('#filter_tanggal').val(),
+                    tanggal_awal: $('#filter_tanggal').val(),
                     tanggal_akhir: $('#filter_tanggal_akhir').val()
                 },
                 success: function(res) {
@@ -756,9 +756,12 @@
             fetchAnalyticsData();
         });
 
+        const startOfMonth = "{{ \Carbon\Carbon::now()->startOfMonth()->format('Y-m-d') }}";
+        const endOfMonth = "{{ \Carbon\Carbon::now()->endOfMonth()->format('Y-m-d') }}";
+
         $('#btnResetFilter').on('click', function() {
-            $('#filter_tanggal').val('');
-            $('#filter_tanggal_akhir').val('');
+            $('#filter_tanggal').val(startOfMonth);
+            $('#filter_tanggal_akhir').val(endOfMonth);
             @if(!auth()->user()->hasRole('PIC Digital Cabang'))
                 $('#filter_branch').val('');
             @endif
@@ -772,26 +775,26 @@
         // Global Export Handlers
         $('#btnExportPdf').on('click', function() {
             const branchId = $('#filter_branch').val() || '';
-            const tanggal = $('#filter_tanggal').val() || '';
+            const tanggalAwal = $('#filter_tanggal').val() || '';
             const tanggalAkhir = $('#filter_tanggal_akhir').val() || '';
             
             let url = "{{ route('exports.pdf') }}?report_type=tiktok_live";
             if (branchId) url += "&branch_id=" + encodeURIComponent(branchId);
-            if (tanggal && !tanggalAkhir) url += "&tanggal=" + encodeURIComponent(tanggal);
-            if (tanggal && tanggalAkhir) url += "&tanggal_awal=" + encodeURIComponent(tanggal) + "&tanggal_akhir=" + encodeURIComponent(tanggalAkhir);
+            if (tanggalAwal) url += "&tanggal_awal=" + encodeURIComponent(tanggalAwal);
+            if (tanggalAkhir) url += "&tanggal_akhir=" + encodeURIComponent(tanggalAkhir);
             
             window.open(url, '_blank');
         });
 
         $('#btnExportExcel').on('click', function() {
             const branchId = $('#filter_branch').val() || '';
-            const tanggal = $('#filter_tanggal').val() || '';
+            const tanggalAwal = $('#filter_tanggal').val() || '';
             const tanggalAkhir = $('#filter_tanggal_akhir').val() || '';
             
             let url = "{{ route('exports.excel') }}?report_type=tiktok_live";
             if (branchId) url += "&branch_id=" + encodeURIComponent(branchId);
-            if (tanggal && !tanggalAkhir) url += "&tanggal=" + encodeURIComponent(tanggal);
-            if (tanggal && tanggalAkhir) url += "&tanggal_awal=" + encodeURIComponent(tanggal) + "&tanggal_akhir=" + encodeURIComponent(tanggalAkhir);
+            if (tanggalAwal) url += "&tanggal_awal=" + encodeURIComponent(tanggalAwal);
+            if (tanggalAkhir) url += "&tanggal_akhir=" + encodeURIComponent(tanggalAkhir);
             
             window.location.href = url;
         });

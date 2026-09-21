@@ -32,11 +32,7 @@ class TiktokLiveReportController extends Controller
                 $query->where('branch_id', $request->branch_id);
             }
 
-            if ($request->filled('tanggal')) {
-                $query->where('tanggal_live', $request->tanggal);
-            } elseif ($request->filled('tanggal_awal') && $request->filled('tanggal_akhir')) {
-                $query->whereBetween('tanggal_live', [$request->tanggal_awal, $request->tanggal_akhir]);
-            }
+            $query = $this->applyDateFilter($query, $request);
 
             return DataTables::of($query->latest('tanggal_live'))
                 ->addIndexColumn()
@@ -73,6 +69,7 @@ class TiktokLiveReportController extends Controller
         if ($user->hasRole('PIC Digital Cabang')) {
             $statsQuery->where('branch_id', $user->branch_id);
         }
+        $statsQuery = $this->applyDateFilter($statsQuery, $request);
 
         $totalSesi = (clone $statsQuery)->count();
         $totalMenit = (clone $statsQuery)->selectRaw('SUM((durasi_jam * 60) + durasi_menit) as total_min')->value('total_min') ?? 0;
@@ -89,6 +86,27 @@ class TiktokLiveReportController extends Controller
         ));
     }
 
+    private function applyDateFilter($query, Request $request)
+    {
+        $tanggalAwal = $request->input('tanggal_awal') ?: $request->input('tanggal');
+        $tanggalAkhir = $request->input('tanggal_akhir');
+
+        if ($tanggalAwal && $tanggalAkhir) {
+            $query->whereBetween('tanggal_live', [$tanggalAwal, $tanggalAkhir]);
+        } elseif ($tanggalAwal) {
+            $query->where('tanggal_live', $tanggalAwal);
+        } elseif ($tanggalAkhir) {
+            $query->where('tanggal_live', '<=', $tanggalAkhir);
+        } else {
+            $query->whereBetween('tanggal_live', [
+                now()->startOfMonth()->toDateString(),
+                now()->endOfMonth()->toDateString()
+            ]);
+        }
+
+        return $query;
+    }
+
     private function getAnalyticsData(Request $request, $user)
     {
         $query = TiktokLiveReport::query();
@@ -99,11 +117,7 @@ class TiktokLiveReportController extends Controller
             $query->where('branch_id', $request->branch_id);
         }
 
-        if ($request->filled('tanggal')) {
-            $query->where('tanggal_live', $request->tanggal);
-        } elseif ($request->filled('tanggal_awal') && $request->filled('tanggal_akhir')) {
-            $query->whereBetween('tanggal_live', [$request->tanggal_awal, $request->tanggal_akhir]);
-        }
+        $query = $this->applyDateFilter($query, $request);
 
         // Overall Stats
         $totalSesi = (clone $query)->count();
@@ -143,15 +157,9 @@ class TiktokLiveReportController extends Controller
 
         // Branch Leaderboard Ranking
         $leaderboardQuery = TiktokLiveReport::query();
-        if ($request->filled('tanggal')) {
-            $leaderboardQuery->where('tanggal_live', $request->tanggal);
-        } elseif ($request->filled('tanggal_awal') && $request->filled('tanggal_akhir')) {
-            $leaderboardQuery->whereBetween('tanggal_live', [$request->tanggal_awal, $request->tanggal_akhir]);
-        }
-        if ($request->filled('branch_id')) {
+        $leaderboardQuery = $this->applyDateFilter($leaderboardQuery, $request);
+        if (!$user->hasRole('PIC Digital Cabang') && $request->filled('branch_id')) {
             $leaderboardQuery->where('branch_id', $request->branch_id);
-        } elseif ($user->hasRole('PIC Digital Cabang')) {
-            $leaderboardQuery->where('branch_id', $user->branch_id);
         }
 
         $branchRankings = $leaderboardQuery
@@ -178,15 +186,9 @@ class TiktokLiveReportController extends Controller
 
         // Individual Host Leaderboard Ranking
         $hostRankQuery = TiktokLiveReport::query();
-        if ($request->filled('tanggal')) {
-            $hostRankQuery->where('tanggal_live', $request->tanggal);
-        } elseif ($request->filled('tanggal_awal') && $request->filled('tanggal_akhir')) {
-            $hostRankQuery->whereBetween('tanggal_live', [$request->tanggal_awal, $request->tanggal_akhir]);
-        }
-        if ($request->filled('branch_id')) {
+        $hostRankQuery = $this->applyDateFilter($hostRankQuery, $request);
+        if (!$user->hasRole('PIC Digital Cabang') && $request->filled('branch_id')) {
             $hostRankQuery->where('branch_id', $request->branch_id);
-        } elseif ($user->hasRole('PIC Digital Cabang')) {
-            $hostRankQuery->where('branch_id', $user->branch_id);
         }
 
         $individualRankings = $hostRankQuery
