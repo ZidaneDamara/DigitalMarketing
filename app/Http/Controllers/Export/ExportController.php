@@ -41,6 +41,9 @@ class ExportController extends Controller
         $weeklyReports = collect();
         $monthlyInsights = collect();
         $tiktokLiveReports = collect();
+        $tiktokLiveSummary = null;
+        $tiktokLiveBranchRankings = collect();
+        $tiktokLiveHostRankings = collect();
 
         if ($type === 'daily') {
             $query = DailyReport::with(['branch', 'user']);
