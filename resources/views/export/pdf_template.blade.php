@@ -148,7 +148,7 @@
         <!-- Section 1: Ranking Per Cabang -->
         <div style="margin-bottom: 20px; page-break-inside: avoid;">
             <h4 style="margin: 0 0 8px 0; color: #003399; font-size: 12px; font-weight: bold;">
-                🏆 Papan Peringkat (Ranking Per Cabang)
+                Papan Peringkat (Ranking Per Cabang)
             </h4>
             <table>
                 <thead>
@@ -166,7 +166,7 @@
                 <tbody>
                     @forelse($tiktokLiveBranchRankings ?? [] as $rank)
                     <tr>
-                        <td class="text-center"><strong>#{{ $rank['rank'] }}</strong></td>
+                        <td class="text-center"><strong>{{ $rank['rank'] }}</strong></td>
                         <td class="text-center">{{ $rank['branch_code'] }}</td>
                         <td><strong>{{ $rank['branch_name'] }}</strong></td>
                         <td class="text-center">{{ number_format($rank['total_sesi']) }} Sesi</td>
@@ -187,7 +187,7 @@
         <!-- Section 2: Ranking Per Host -->
         <div style="margin-bottom: 20px; page-break-inside: avoid;">
             <h4 style="margin: 0 0 8px 0; color: #003399; font-size: 12px; font-weight: bold;">
-                🎙️ Papan Peringkat (Ranking Per Host / Penyiara)
+                Papan Peringkat (Ranking Per Host / Penyiara)
             </h4>
             <table>
                 <thead>
@@ -210,7 +210,7 @@
                 <tbody>
                     @forelse($tiktokLiveHostRankings ?? [] as $host)
                     <tr>
-                        <td class="text-center"><strong>#{{ $host['rank'] }}</strong></td>
+                        <td class="text-center"><strong>{{ $host['rank'] }}</strong></td>
                         <td><strong>{{ $host['nama_host'] }}</strong></td>
                         <td class="text-center">
                             <span class="{{ $host['jabatan'] === 'PIC Digital' ? 'badge-f' : 'badge-nf' }}">{{ $host['jabatan'] }}</span>
@@ -238,7 +238,7 @@
         <!-- Section 3: Detail Laporan Harian Live TikTok -->
         <div style="margin-bottom: 20px;">
             <h4 style="margin: 0 0 8px 0; color: #003399; font-size: 12px; font-weight: bold;">
-                📋 Detail Laporan Harian Live TikTok
+                Detail Laporan Harian Live TikTok
             </h4>
             <table>
                 <thead>

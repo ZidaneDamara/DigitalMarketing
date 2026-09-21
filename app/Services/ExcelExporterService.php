@@ -194,7 +194,7 @@ class ExcelExporterService
 
             foreach ($branchRankings as $idx => $bRank) {
                 $isOdd = ($idx % 2 === 1);
-                $sheet->setCellValue("A{$currentRow}", "#" . $bRank['rank']);
+                $sheet->setCellValue("A{$currentRow}", $bRank['rank']);
                 $sheet->setCellValue("B{$currentRow}", $bRank['branch_code']);
                 $sheet->setCellValue("C{$currentRow}", $bRank['branch_name']);
                 $sheet->setCellValue("D{$currentRow}", $bRank['total_sesi']);
@@ -232,7 +232,7 @@ class ExcelExporterService
 
             foreach ($hostRankings as $idx => $hRank) {
                 $isOdd = ($idx % 2 === 1);
-                $sheet->setCellValue("A{$currentRow}", "#" . $hRank['rank']);
+                $sheet->setCellValue("A{$currentRow}", $hRank['rank']);
                 $sheet->setCellValue("B{$currentRow}", $hRank['nama_host']);
                 $sheet->setCellValue("C{$currentRow}", $hRank['jabatan']);
                 $sheet->setCellValue("D{$currentRow}", $hRank['branch_code']);
