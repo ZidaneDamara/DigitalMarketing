@@ -153,36 +153,126 @@ class ExcelExporterService
     /**
      * Build TikTok Live Report Worksheet.
      */
+    /**
+     * Build TikTok Live Report Worksheet.
+     */
     private function buildTiktokLiveSheet($sheet, $reports, array $meta): void
     {
-        $lastCol = 'M';
+        $lastCol = 'N';
         $subtitle = $this->buildSubtitleText($meta, 'TikTok Live');
         $this->createHeaderBanner($sheet, 'LAPORAN HARIAN LIVE TIKTOK - DMPMS YAMAHA', $subtitle, $lastCol);
 
         // Calculate KPI Metrics
-        $totalSesi = $reports->count();
-        $totalPenonton = $reports->sum('jumlah_penonton');
-        $totalLikes = $reports->sum('jumlah_like');
-        $totalStu = $reports->sum('stu');
+        $summary = $meta['tiktok_summary'] ?? null;
+        $totalSesi = $summary['total_sesi'] ?? $reports->count();
+        $totalMenit = $summary['total_menit'] ?? $reports->sum(fn($r) => ($r->durasi_jam * 60) + $r->durasi_menit);
+        $hours = floor($totalMenit / 60);
+        $mins = $totalMenit % 60;
+        $totalDurasiFormatted = "{$hours} Jam {$mins} Mnt";
+        $totalPenonton = $summary['total_penonton'] ?? $reports->sum('jumlah_penonton');
+        $totalLikes = $summary['total_likes'] ?? $reports->sum('jumlah_like');
+        $totalStu = $summary['total_stu'] ?? $reports->sum('stu');
 
         $cards = [
             ['title' => 'Total Sesi Live', 'value' => number_format($totalSesi) . ' Sesi', 'color' => '0284C7'],
+            ['title' => 'Total Durasi Live', 'value' => $totalDurasiFormatted, 'color' => '1E3A8A'],
             ['title' => 'Total Penonton', 'value' => number_format($totalPenonton) . ' Penonton', 'color' => '16A34A'],
             ['title' => 'Total Likes', 'value' => number_format($totalLikes) . ' Likes', 'color' => 'EA580C'],
             ['title' => 'Total STU (Lead)', 'value' => number_format($totalStu) . ' Unit', 'color' => '9333EA'],
         ];
-        $headerRow = $this->createKpiCards($sheet, $cards, 3, 4);
+        $currentRow = $this->createKpiCards($sheet, $cards, 3, 5);
+
+        // --- Section 1: Ranking Per Cabang ---
+        $branchRankings = $meta['branch_rankings'] ?? collect();
+        if (count($branchRankings) > 0) {
+            $this->createSectionHeader($sheet, $currentRow, 'PAPAN PERINGKAT (RANKING PER CABANG)', 'H');
+            $currentRow++;
+
+            $branchHeaders = ['Rangking', 'Kode Cabang', 'Nama Cabang', 'Total Sesi', 'Total Durasi', 'Total Penonton', 'Total Likes', 'Total STU'];
+            $this->createTableHeaders($sheet, $branchHeaders, $currentRow, 'H');
+            $currentRow++;
+
+            foreach ($branchRankings as $idx => $bRank) {
+                $isOdd = ($idx % 2 === 1);
+                $sheet->setCellValue("A{$currentRow}", "#" . $bRank['rank']);
+                $sheet->setCellValue("B{$currentRow}", $bRank['branch_code']);
+                $sheet->setCellValue("C{$currentRow}", $bRank['branch_name']);
+                $sheet->setCellValue("D{$currentRow}", $bRank['total_sesi']);
+                $sheet->setCellValue("E{$currentRow}", $bRank['total_durasi_formatted']);
+                $sheet->setCellValue("F{$currentRow}", $bRank['total_penonton']);
+                $sheet->setCellValue("G{$currentRow}", $bRank['total_likes']);
+                $sheet->setCellValue("H{$currentRow}", $bRank['total_stu']);
+
+                $this->applyDataRowStyle($sheet, $currentRow, $isOdd, 'H');
+
+                $sheet->getStyle("A{$currentRow}:B{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle("D{$currentRow}:E{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle("F{$currentRow}:H{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+                $sheet->getStyle("F{$currentRow}:H{$currentRow}")->getNumberFormat()->setFormatCode('#,##0');
+
+                $currentRow++;
+            }
+
+            $currentRow++; // Blank separator row
+        }
+
+        // --- Section 2: Ranking Per Host ---
+        $hostRankings = $meta['host_rankings'] ?? collect();
+        if (count($hostRankings) > 0) {
+            $this->createSectionHeader($sheet, $currentRow, 'PAPAN PERINGKAT (RANKING PER HOST / PENYIARA)', 'M');
+            $currentRow++;
+
+            $hostHeaders = [
+                'Rangking', 'Nama Host', 'Jabatan Host', 'Kode Cabang', 'Nama Cabang',
+                'Total Sesi', 'Hari Aktif', 'Total Durasi', 'Avg Jam / Hari', 'Avg Jam / Sesi',
+                'Total Penonton', 'Total Likes', 'Total STU'
+            ];
+            $this->createTableHeaders($sheet, $hostHeaders, $currentRow, 'M');
+            $currentRow++;
+
+            foreach ($hostRankings as $idx => $hRank) {
+                $isOdd = ($idx % 2 === 1);
+                $sheet->setCellValue("A{$currentRow}", "#" . $hRank['rank']);
+                $sheet->setCellValue("B{$currentRow}", $hRank['nama_host']);
+                $sheet->setCellValue("C{$currentRow}", $hRank['jabatan']);
+                $sheet->setCellValue("D{$currentRow}", $hRank['branch_code']);
+                $sheet->setCellValue("E{$currentRow}", $hRank['branch_name']);
+                $sheet->setCellValue("F{$currentRow}", $hRank['total_sesi']);
+                $sheet->setCellValue("G{$currentRow}", $hRank['total_hari']);
+                $sheet->setCellValue("H{$currentRow}", $hRank['total_durasi_formatted']);
+                $sheet->setCellValue("I{$currentRow}", $hRank['avg_jam_per_hari_formatted']);
+                $sheet->setCellValue("J{$currentRow}", $hRank['avg_jam_per_sesi_formatted']);
+                $sheet->setCellValue("K{$currentRow}", $hRank['total_penonton']);
+                $sheet->setCellValue("L{$currentRow}", $hRank['total_likes']);
+                $sheet->setCellValue("M{$currentRow}", $hRank['total_stu']);
+
+                $this->applyDataRowStyle($sheet, $currentRow, $isOdd, 'M');
+
+                $sheet->getStyle("A{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle("C{$currentRow}:D{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle("F{$currentRow}:J{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle("K{$currentRow}:M{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+                $sheet->getStyle("K{$currentRow}:M{$currentRow}")->getNumberFormat()->setFormatCode('#,##0');
+
+                $currentRow++;
+            }
+
+            $currentRow++; // Blank separator row
+        }
+
+        // --- Section 3: Detail Laporan Harian Live TikTok ---
+        $this->createSectionHeader($sheet, $currentRow, 'DETAIL LAPORAN HARIAN LIVE TIKTOK', 'N');
+        $currentRow++;
 
         $headers = [
             'No', 'Kode Cabang', 'Nama Cabang', 'Tanggal Live', 'Nama Host (Yang Live)',
             'Jabatan Host', 'Durasi Jam', 'Durasi Menit', 'Total Menit', 'Penonton',
             'Likes', 'Diinput Oleh', 'Bukti Screenshot', 'Catatan'
         ];
-        $lastCol = Coordinate::stringFromColumnIndex(count($headers));
-        $this->createTableHeaders($sheet, $headers, $headerRow, $lastCol);
+        $this->createTableHeaders($sheet, $headers, $currentRow, 'N');
+        $currentRow++;
 
-        $dataStartRow = $headerRow + 1;
-        $currentRow = $dataStartRow;
+        $dataStartRow = $currentRow;
 
         foreach ($reports as $index => $row) {
             $isOdd = ($index % 2 === 1);
@@ -462,6 +552,21 @@ class ExcelExporterService
             'font' => ['italic' => true, 'size' => 9.5, 'color' => ['rgb' => '94A3B8'], 'name' => 'Segoe UI'],
             'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '1E293B']],
             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+        ]);
+    }
+
+    /**
+     * Create Section Title Header Row.
+     */
+    private function createSectionHeader($sheet, int $row, string $title, string $lastColumn = 'N'): void
+    {
+        $sheet->mergeCells("A{$row}:{$lastColumn}{$row}");
+        $sheet->setCellValue("A{$row}", "  " . mb_strtoupper($title));
+        $sheet->getRowDimension($row)->setRowHeight(24);
+        $sheet->getStyle("A{$row}:{$lastColumn}{$row}")->applyFromArray([
+            'font' => ['bold' => true, 'size' => 11, 'color' => ['rgb' => 'FFFFFF'], 'name' => 'Segoe UI'],
+            'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '0F172A']],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
         ]);
     }
 

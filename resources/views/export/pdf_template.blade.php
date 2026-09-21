@@ -119,57 +119,191 @@
         </table>
 
     @elseif($type === 'tiktok_live')
-        <h4>Detail Laporan Harian Live TikTok</h4>
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 25px;">No</th>
-                    <th>Tanggal Live</th>
-                    <th>Kode</th>
-                    <th>Nama Cabang</th>
-                    <th>Nama Host (Yang Live)</th>
-                    <th class="text-center">Jabatan</th>
-                    <th class="text-center">Durasi</th>
-                    <th class="text-center">Penonton</th>
-                    <th class="text-center">Likes</th>
-                    <th class="text-center">Komentar / Share</th>
-                    <th class="text-center">STU</th>
-                    <th>Bukti SS Live</th>
-                    <th>Catatan</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($tiktokLiveReports as $index => $row)
-                <tr>
-                    <td class="text-center">{{ $index + 1 }}</td>
-                    <td class="text-center">{{ $row->tanggal_live ? $row->tanggal_live->format('d/m/Y') : '-' }}</td>
-                    <td>{{ $row->branch->kode ?? '-' }}</td>
-                    <td>{{ $row->branch->nama_cabang ?? '-' }}</td>
-                    <td><strong>{{ $row->nama_host }}</strong></td>
-                    <td class="text-center">
-                        <span class="{{ $row->jabatan === 'PIC Digital' ? 'badge-f' : 'badge-nf' }}">{{ $row->jabatan }}</span>
-                    </td>
-                    <td class="text-center">{{ $row->formatted_durasi }}</td>
-                    <td class="text-center">{{ number_format($row->jumlah_penonton) }}</td>
-                    <td class="text-center">{{ number_format($row->jumlah_like) }}</td>
-                    <td class="text-center">{{ number_format($row->jumlah_komentar) }} / {{ number_format($row->jumlah_share) }}</td>
-                    <td class="text-center"><strong>{{ $row->stu !== null ? number_format($row->stu) . ' Unit' : '-' }}</strong></td>
-                    <td class="text-center">
-                        @if($row->bukti_screenshot_url)
-                            <a href="{{ $row->bukti_screenshot_url }}" target="_blank" style="color: #003399; font-weight: bold; text-decoration: underline;">Buka SS</a>
-                        @else
-                            <span style="color: #999;">-</span>
-                        @endif
-                    </td>
-                    <td>{{ $row->catatan ?: '-' }}</td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="13" class="text-center">Tidak ada data laporan Live TikTok pada filter ini.</td>
-                </tr>
-                @endforelse
-            </tbody>
+        <!-- Ringkasan KPI Statistics Cards -->
+        <table style="width: 100%; border-collapse: separate; border-spacing: 5px; margin-bottom: 20px; border: none;">
+            <tr>
+                <td style="width: 20%; background-color: #f1f5f9; border: 1px solid #cbd5e1; text-align: center; padding: 8px; border-radius: 4px;">
+                    <div style="font-size: 8.5px; color: #64748b; font-weight: bold; text-transform: uppercase;">Total Sesi Live</div>
+                    <div style="font-size: 13px; color: #0284c7; font-weight: bold; margin-top: 3px;">{{ number_format($tiktokLiveSummary['total_sesi'] ?? count($tiktokLiveReports)) }} Sesi</div>
+                </td>
+                <td style="width: 20%; background-color: #f1f5f9; border: 1px solid #cbd5e1; text-align: center; padding: 8px; border-radius: 4px;">
+                    <div style="font-size: 8.5px; color: #64748b; font-weight: bold; text-transform: uppercase;">Total Durasi</div>
+                    <div style="font-size: 13px; color: #003399; font-weight: bold; margin-top: 3px;">{{ $tiktokLiveSummary['total_durasi_formatted'] ?? '0 Jam 0 Mnt' }}</div>
+                </td>
+                <td style="width: 20%; background-color: #f1f5f9; border: 1px solid #cbd5e1; text-align: center; padding: 8px; border-radius: 4px;">
+                    <div style="font-size: 8.5px; color: #64748b; font-weight: bold; text-transform: uppercase;">Total Penonton</div>
+                    <div style="font-size: 13px; color: #16a34a; font-weight: bold; margin-top: 3px;">{{ number_format($tiktokLiveSummary['total_penonton'] ?? $tiktokLiveReports->sum('jumlah_penonton')) }}</div>
+                </td>
+                <td style="width: 20%; background-color: #f1f5f9; border: 1px solid #cbd5e1; text-align: center; padding: 8px; border-radius: 4px;">
+                    <div style="font-size: 8.5px; color: #64748b; font-weight: bold; text-transform: uppercase;">Total Likes</div>
+                    <div style="font-size: 13px; color: #ea580c; font-weight: bold; margin-top: 3px;">{{ number_format($tiktokLiveSummary['total_likes'] ?? $tiktokLiveReports->sum('jumlah_like')) }}</div>
+                </td>
+                <td style="width: 20%; background-color: #f1f5f9; border: 1px solid #cbd5e1; text-align: center; padding: 8px; border-radius: 4px;">
+                    <div style="font-size: 8.5px; color: #64748b; font-weight: bold; text-transform: uppercase;">Total STU (Lead)</div>
+                    <div style="font-size: 13px; color: #9333ea; font-weight: bold; margin-top: 3px;">{{ number_format($tiktokLiveSummary['total_stu'] ?? $tiktokLiveReports->sum('stu')) }} Unit</div>
+                </td>
+            </tr>
         </table>
+
+        <!-- Section 1: Ranking Per Cabang -->
+        <div style="margin-bottom: 20px; page-break-inside: avoid;">
+            <h4 style="margin: 0 0 8px 0; color: #003399; font-size: 12px; font-weight: bold;">
+                🏆 Papan Peringkat (Ranking Per Cabang)
+            </h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 45px;">Rangking</th>
+                        <th>Kode Cabang</th>
+                        <th>Nama Cabang</th>
+                        <th class="text-center">Total Sesi</th>
+                        <th class="text-center">Total Durasi</th>
+                        <th class="text-right">Total Penonton</th>
+                        <th class="text-right">Total Likes</th>
+                        <th class="text-center">Total STU</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($tiktokLiveBranchRankings ?? [] as $rank)
+                    <tr>
+                        <td class="text-center"><strong>#{{ $rank['rank'] }}</strong></td>
+                        <td class="text-center">{{ $rank['branch_code'] }}</td>
+                        <td><strong>{{ $rank['branch_name'] }}</strong></td>
+                        <td class="text-center">{{ number_format($rank['total_sesi']) }} Sesi</td>
+                        <td class="text-center">{{ $rank['total_durasi_formatted'] }}</td>
+                        <td class="text-right">{{ number_format($rank['total_penonton']) }}</td>
+                        <td class="text-right">{{ number_format($rank['total_likes']) }}</td>
+                        <td class="text-center"><strong>{{ number_format($rank['total_stu']) }} Unit</strong></td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="8" class="text-center">Tidak ada data ranking cabang pada filter ini.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section 2: Ranking Per Host -->
+        <div style="margin-bottom: 20px; page-break-inside: avoid;">
+            <h4 style="margin: 0 0 8px 0; color: #003399; font-size: 12px; font-weight: bold;">
+                🎙️ Papan Peringkat (Ranking Per Host / Penyiara)
+            </h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 45px;">Rangking</th>
+                        <th>Nama Host</th>
+                        <th>Jabatan</th>
+                        <th>Kode</th>
+                        <th>Nama Cabang</th>
+                        <th class="text-center">Total Sesi</th>
+                        <th class="text-center">Hari Aktif</th>
+                        <th class="text-center">Total Durasi</th>
+                        <th class="text-center">Avg Jam / Hari</th>
+                        <th class="text-center">Avg Jam / Sesi</th>
+                        <th class="text-right">Total Penonton</th>
+                        <th class="text-right">Total Likes</th>
+                        <th class="text-center">Total STU</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($tiktokLiveHostRankings ?? [] as $host)
+                    <tr>
+                        <td class="text-center"><strong>#{{ $host['rank'] }}</strong></td>
+                        <td><strong>{{ $host['nama_host'] }}</strong></td>
+                        <td class="text-center">
+                            <span class="{{ $host['jabatan'] === 'PIC Digital' ? 'badge-f' : 'badge-nf' }}">{{ $host['jabatan'] }}</span>
+                        </td>
+                        <td class="text-center">{{ $host['branch_code'] }}</td>
+                        <td>{{ $host['branch_name'] }}</td>
+                        <td class="text-center">{{ number_format($host['total_sesi']) }} Sesi</td>
+                        <td class="text-center">{{ number_format($host['total_hari']) }} Hari</td>
+                        <td class="text-center">{{ $host['total_durasi_formatted'] }}</td>
+                        <td class="text-center" style="color: #dc2626; font-weight: bold;">{{ $host['avg_jam_per_hari_formatted'] }}</td>
+                        <td class="text-center" style="color: #2563eb; font-weight: bold;">{{ $host['avg_jam_per_sesi_formatted'] }}</td>
+                        <td class="text-right">{{ number_format($host['total_penonton']) }}</td>
+                        <td class="text-right">{{ number_format($host['total_likes']) }}</td>
+                        <td class="text-center"><strong>{{ number_format($host['total_stu']) }} Unit</strong></td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="13" class="text-center">Tidak ada data ranking host pada filter ini.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section 3: Detail Laporan Harian Live TikTok -->
+        <div style="margin-bottom: 20px;">
+            <h4 style="margin: 0 0 8px 0; color: #003399; font-size: 12px; font-weight: bold;">
+                📋 Detail Laporan Harian Live TikTok
+            </h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25px;">No</th>
+                        <th>Tanggal Live</th>
+                        <th>Kode</th>
+                        <th>Nama Cabang</th>
+                        <th>Nama Host (Yang Live)</th>
+                        <th class="text-center">Jabatan</th>
+                        <th class="text-center">Durasi</th>
+                        <th class="text-right">Penonton</th>
+                        <th class="text-right">Likes</th>
+                        <th class="text-center">Komentar / Share</th>
+                        <th class="text-center">STU</th>
+                        <th>Bukti SS Live</th>
+                        <th>Catatan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($tiktokLiveReports as $index => $row)
+                    <tr>
+                        <td class="text-center">{{ $index + 1 }}</td>
+                        <td class="text-center">{{ $row->tanggal_live ? $row->tanggal_live->format('d/m/Y') : '-' }}</td>
+                        <td>{{ $row->branch->kode ?? '-' }}</td>
+                        <td>{{ $row->branch->nama_cabang ?? '-' }}</td>
+                        <td><strong>{{ $row->nama_host }}</strong></td>
+                        <td class="text-center">
+                            <span class="{{ $row->jabatan === 'PIC Digital' ? 'badge-f' : 'badge-nf' }}">{{ $row->jabatan }}</span>
+                        </td>
+                        <td class="text-center">{{ $row->formatted_durasi }}</td>
+                        <td class="text-right">{{ number_format($row->jumlah_penonton) }}</td>
+                        <td class="text-right">{{ number_format($row->jumlah_like) }}</td>
+                        <td class="text-center">{{ number_format($row->jumlah_komentar) }} / {{ number_format($row->jumlah_share) }}</td>
+                        <td class="text-center"><strong>{{ $row->stu !== null ? number_format($row->stu) . ' Unit' : '-' }}</strong></td>
+                        <td class="text-center">
+                            @if($row->bukti_screenshot_url)
+                                <a href="{{ $row->bukti_screenshot_url }}" target="_blank" style="color: #003399; font-weight: bold; text-decoration: underline;">Buka SS</a>
+                            @else
+                                <span style="color: #999;">-</span>
+                            @endif
+                        </td>
+                        <td>{{ $row->catatan ?: '-' }}</td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="13" class="text-center">Tidak ada data laporan Live TikTok pada filter ini.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+                @if(count($tiktokLiveReports) > 0)
+                <tfoot>
+                    <tr style="background-color: #dbeafe; font-weight: bold; color: #1e3a8a;">
+                        <td colspan="6" class="text-center">TOTAL</td>
+                        <td class="text-center">{{ $tiktokLiveSummary['total_durasi_formatted'] ?? '0 Jam 0 Mnt' }}</td>
+                        <td class="text-right">{{ number_format($tiktokLiveReports->sum('jumlah_penonton')) }}</td>
+                        <td class="text-right">{{ number_format($tiktokLiveReports->sum('jumlah_like')) }}</td>
+                        <td class="text-center">{{ number_format($tiktokLiveReports->sum('jumlah_komentar')) }} / {{ number_format($tiktokLiveReports->sum('jumlah_share')) }}</td>
+                        <td class="text-center">{{ number_format($tiktokLiveReports->sum('stu')) }} Unit</td>
+                        <td colspan="2"></td>
+                    </tr>
+                </tfoot>
+                @endif
+            </table>
+        </div>
 
     @elseif($type === 'weekly')
         <h4>Detail Laporan Mingguan (Post Insight)</h4>
