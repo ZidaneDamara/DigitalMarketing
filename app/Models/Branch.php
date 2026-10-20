@@ -33,4 +33,24 @@ class Branch extends Model
     {
         return $this->hasMany(MonthlyInsight::class);
     }
+
+    public function metaAdsReports()
+    {
+        return $this->hasMany(MetaAdsReport::class);
+    }
+
+    public function googleRatingMonths()
+    {
+        return $this->hasMany(GoogleRatingMonth::class);
+    }
+
+    public function googleRatingTestimonials()
+    {
+        return $this->hasMany(GoogleRatingTestimonial::class);
+    }
+
+    public function metaAdsProspects()
+    {
+        return $this->hasMany(MetaAdsProspect::class);
+    }
 }

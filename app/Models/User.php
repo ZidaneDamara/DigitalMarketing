@@ -55,4 +55,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(PersonalKpi::class);
     }
+
+    public function metaAdsReports()
+    {
+        return $this->hasMany(MetaAdsReport::class);
+    }
+
+    public function googleRatingTestimonials()
+    {
+        return $this->hasMany(GoogleRatingTestimonial::class);
+    }
 }

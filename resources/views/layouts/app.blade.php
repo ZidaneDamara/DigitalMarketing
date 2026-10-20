@@ -256,6 +256,9 @@
             <li class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
                 <a href="{{ route('dashboard') }}"><i class="fas fa-chart-pie text-info"></i> Executive Dashboard</a>
             </li>
+            <li class="{{ request()->routeIs('dashboard.meta-ads') ? 'active' : '' }}">
+                <a href="{{ route('dashboard.meta-ads') }}"><i class="fab fa-meta text-primary"></i> Dashboard Meta Ads</a>
+            </li>
             <li class="{{ request()->routeIs('leaderboard.index') ? 'active' : '' }}">
                 <a href="{{ route('leaderboard.index') }}"><i class="fas fa-trophy text-warning"></i> Leaderboard Cabang</a>
             </li>
@@ -270,6 +273,12 @@
             <li class="{{ request()->routeIs('reports.tiktok-live.*') ? 'active' : '' }}">
                 <a href="{{ route('reports.tiktok-live.index') }}"><i class="fab fa-tiktok text-danger"></i> Live TikTok Report</a>
             </li>
+            <li class="{{ request()->routeIs('reports.meta-ads.*') ? 'active' : '' }}">
+                <a href="{{ route('reports.meta-ads.index') }}"><i class="fab fa-facebook text-primary"></i> Monthly Meta Ads</a>
+            </li>
+            <li class="{{ request()->routeIs('reports.google-rating.*') ? 'active' : '' }}">
+                <a href="{{ route('reports.google-rating.index') }}"><i class="fab fa-google text-warning"></i> Report Google Rating</a>
+            </li>
             <li class="{{ request()->routeIs('reports.weekly.*') ? 'active' : '' }}">
                 <a href="{{ route('reports.weekly.index') }}"><i class="fas fa-calendar-week text-warning"></i> Weekly Report (Post Insight)</a>
             </li>
@@ -277,11 +286,12 @@
                 <a href="{{ route('reports.monthly.index') }}"><i class="fas fa-file-invoice text-danger"></i> Monthly Insight & SS</a>
             </li>
 
-            @role('Super Admin')
             <li class="menu-header">KPI & MANAGEMENT</li>
             <li class="{{ request()->routeIs('kpis.*') ? 'active' : '' }}">
                 <a href="{{ route('kpis.index') }}"><i class="fas fa-bullseye text-warning"></i> Target KPI Cabang</a>
             </li>
+
+            @role('Super Admin')
             <li class="{{ request()->routeIs('master.branches.*') ? 'active' : '' }}">
                 <a href="{{ route('master.branches.index') }}"><i class="fas fa-store text-info"></i> Master Cabang</a>
             </li>

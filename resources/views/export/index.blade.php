@@ -31,6 +31,8 @@
                         <select name="report_type" id="pdf_report_type" class="form-select rounded-3 shadow-none report-type-select" data-target="pdf" required>
                             <option value="daily" selected>Laporan Harian (Daily Report)</option>
                             <option value="tiktok_live">Laporan Live TikTok</option>
+                            <option value="meta_ads">Laporan Meta Ads (Facebook & Instagram)</option>
+                            <option value="google_rating">Laporan Google Rating & Testimoni</option>
                             <option value="weekly">Laporan Mingguan (Post Insight)</option>
                             <option value="monthly">Laporan Bulanan (Monthly Insight)</option>
                         </select>
@@ -125,6 +127,8 @@
                         <select name="report_type" id="excel_report_type" class="form-select rounded-3 shadow-none report-type-select" data-target="excel" required>
                             <option value="daily" selected>Laporan Harian (Daily Report)</option>
                             <option value="tiktok_live">Laporan Live TikTok</option>
+                            <option value="meta_ads">Laporan Meta Ads (Facebook & Instagram)</option>
+                            <option value="google_rating">Laporan Google Rating & Testimoni</option>
                             <option value="weekly">Laporan Mingguan (Post Insight)</option>
                             <option value="monthly">Laporan Bulanan (Monthly Insight)</option>
                         </select>

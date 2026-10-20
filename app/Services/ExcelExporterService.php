@@ -33,6 +33,12 @@ class ExcelExporterService
             case 'tiktok_live':
                 $this->buildTiktokLiveSheet($sheet, $reports, $meta);
                 break;
+            case 'meta_ads':
+                $this->buildMetaAdsSheet($sheet, $reports, $meta);
+                break;
+            case 'google_rating':
+                $this->buildGoogleRatingSheet($sheet, $reports, $meta);
+                break;
             case 'weekly':
                 $this->buildWeeklySheet($sheet, $reports, $meta);
                 break;
@@ -723,6 +729,123 @@ class ExcelExporterService
             $sheet->getColumnDimension($colLetter)->setAutoSize(true);
         }
     }
+
+    /**
+     * Build Meta Ads Report Worksheet.
+     */
+     private function buildMetaAdsSheet($sheet, $reports, array $meta): void
+     {
+         $lastCol = 'L';
+         $subtitle = $this->buildSubtitleText($meta, 'Meta Ads (Facebook & Instagram)');
+         $this->createHeaderBanner($sheet, 'LAPORAN MONTHLY META ADS - DMPMS YAMAHA', $subtitle, $lastCol);
+
+         $totalBudget = $reports->sum('budget');
+         $totalViews = $reports->sum('total_views');
+         $totalPercakapan = $reports->sum('total_percakapan');
+         $totalStu = $reports->sum('stu');
+         $avgCpl = $reports->count() > 0 ? $reports->avg('cpl') : 0;
+
+         $cards = [
+             ['title' => 'Total Budget Spend', 'value' => 'Rp ' . number_format($totalBudget, 0, ',', '.'), 'color' => '003399'],
+             ['title' => 'Total Views / Impresi', 'value' => number_format($totalViews), 'color' => '0284C7'],
+             ['title' => 'Total Percakapan (Leads)', 'value' => number_format($totalPercakapan) . ' Chat', 'color' => '16A34A'],
+             ['title' => 'Rata-rata CPL', 'value' => 'Rp ' . number_format($avgCpl, 0, ',', '.'), 'color' => 'EA580C'],
+             ['title' => 'Total STU Closing', 'value' => number_format($totalStu) . ' Unit', 'color' => 'DC2626'],
+         ];
+         $currentRow = $this->createKpiCards($sheet, $cards, 3, 5);
+
+         $headers = [
+             'No', 'Kode Cabang', 'Nama Cabang', 'Periode', 'Nama Iklan', 'Produk',
+             'Budget Spend (Rp)', 'Views', 'Percakapan', 'CTR (%)', 'CPC (Rp)', 'CPM (Rp)',
+             'CPL (Rp)', 'STU (Unit)', 'Foto Closing', 'Catatan'
+         ];
+         $this->createTableHeaders($sheet, $headers, $currentRow, 'P');
+         $currentRow++;
+
+         foreach ($reports as $idx => $r) {
+             $isOdd = ($idx % 2 === 1);
+             $sheet->setCellValue("A{$currentRow}", $idx + 1);
+             $sheet->setCellValue("B{$currentRow}", $r->branch->kode ?? '-');
+             $sheet->setCellValue("C{$currentRow}", $r->branch->nama_cabang ?? '-');
+             $sheet->setCellValue("D{$currentRow}", $r->nama_bulan . ' ' . $r->tahun);
+             $sheet->setCellValue("E{$currentRow}", $r->nama_iklan);
+             $sheet->setCellValue("F{$currentRow}", $r->product);
+             $sheet->setCellValue("G{$currentRow}", $r->budget);
+             $sheet->setCellValue("H{$currentRow}", $r->total_views);
+             $sheet->setCellValue("I{$currentRow}", $r->total_percakapan);
+             $sheet->setCellValue("J{$currentRow}", $r->ctr);
+             $sheet->setCellValue("K{$currentRow}", $r->cpc);
+             $sheet->setCellValue("L{$currentRow}", $r->cpm);
+             $sheet->setCellValue("M{$currentRow}", $r->cpl);
+             $sheet->setCellValue("N{$currentRow}", $r->stu);
+             $sheet->setCellValue("O{$currentRow}", $r->closingProofs->count() . ' Foto');
+             $sheet->setCellValue("P{$currentRow}", $r->catatan ?? '-');
+
+             $this->applyDataRowStyle($sheet, $currentRow, $isOdd, 'P');
+
+             $sheet->getStyle("A{$currentRow}:B{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+             $sheet->getStyle("D{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+             $sheet->getStyle("G{$currentRow}")->getNumberFormat()->setFormatCode('#,##0');
+             $sheet->getStyle("H{$currentRow}:I{$currentRow}")->getNumberFormat()->setFormatCode('#,##0');
+             $sheet->getStyle("J{$currentRow}")->getNumberFormat()->setFormatCode('0.00"%"');
+             $sheet->getStyle("K{$currentRow}:M{$currentRow}")->getNumberFormat()->setFormatCode('#,##0');
+             $sheet->getStyle("N{$currentRow}")->getNumberFormat()->setFormatCode('#,##0');
+             $sheet->getStyle("O{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+             $currentRow++;
+         }
+
+         $this->autoSizeColumns($sheet, 'P');
+     }
+
+    /**
+     * Build Google Rating Report Worksheet.
+     */
+     private function buildGoogleRatingSheet($sheet, $reports, array $meta): void
+     {
+         $lastCol = 'H';
+         $subtitle = $this->buildSubtitleText($meta, 'Google Rating & Testimoni');
+         $this->createHeaderBanner($sheet, 'LAPORAN GOOGLE RATING & TESTIMONI - DMPMS YAMAHA', $subtitle, $lastCol);
+
+         $totalReviews = $reports->count();
+         $avgRating = $reports->count() > 0 ? round($reports->avg('rating_bintang'), 2) : 5.0;
+
+         $cards = [
+             ['title' => 'Target Bulanan', 'value' => '125 Review', 'color' => '003399'],
+             ['title' => 'Minimal Harian', 'value' => '5 Review/Hari', 'color' => 'EA580C'],
+             ['title' => 'Total Review Terinput', 'value' => number_format($totalReviews) . ' Review', 'color' => '16A34A'],
+             ['title' => 'Rata-rata Rating', 'value' => number_format($avgRating, 2) . ' ⭐', 'color' => 'CA8A04'],
+         ];
+         $currentRow = $this->createKpiCards($sheet, $cards, 3, 4);
+
+         $headers = [
+             'No', 'Kode Cabang', 'Nama Cabang', 'Tanggal Review', 'Nama Reviewer',
+             'Rating Bintang', 'Komentar Ulasan', 'Diinput Oleh'
+         ];
+         $this->createTableHeaders($sheet, $headers, $currentRow, 'H');
+         $currentRow++;
+
+         foreach ($reports as $idx => $r) {
+             $isOdd = ($idx % 2 === 1);
+             $sheet->setCellValue("A{$currentRow}", $idx + 1);
+             $sheet->setCellValue("B{$currentRow}", $r->branch->kode ?? '-');
+             $sheet->setCellValue("C{$currentRow}", $r->branch->nama_cabang ?? '-');
+             $sheet->setCellValue("D{$currentRow}", $r->formatted_tanggal);
+             $sheet->setCellValue("E{$currentRow}", $r->nama_reviewer);
+             $sheet->setCellValue("F{$currentRow}", $r->rating_bintang . ' Bintang');
+             $sheet->setCellValue("G{$currentRow}", $r->komentar_ulasan ?? '-');
+             $sheet->setCellValue("H{$currentRow}", $r->user->name ?? '-');
+
+             $this->applyDataRowStyle($sheet, $currentRow, $isOdd, 'H');
+             $sheet->getStyle("A{$currentRow}:B{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+             $sheet->getStyle("D{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+             $sheet->getStyle("F{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+             $currentRow++;
+         }
+
+         $this->autoSizeColumns($sheet, 'H');
+     }
 
     /**
      * Build Subtitle Meta Text.

@@ -7,11 +7,14 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Dashboard\BranchPerformanceController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Dashboard\LeaderboardController;
+use App\Http\Controllers\Dashboard\MetaAdsDashboardController;
 use App\Http\Controllers\Export\ExportController;
 use App\Http\Controllers\Kpi\KpiManagementController;
 use App\Http\Controllers\Master\BranchController;
 use App\Http\Controllers\Master\UserController;
 use App\Http\Controllers\Report\DailyReportController;
+use App\Http\Controllers\Report\GoogleRatingReportController;
+use App\Http\Controllers\Report\MetaAdsReportController;
 use App\Http\Controllers\Report\MonthlyInsightController;
 use App\Http\Controllers\Report\TiktokLiveReportController;
 use App\Http\Controllers\Report\WeeklyReportController;
@@ -66,6 +69,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Executive Dashboard & Analytics
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/meta-ads', [MetaAdsDashboardController::class, 'index'])->name('dashboard.meta-ads');
     Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
     Route::get('/branch-performance', [BranchPerformanceController::class, 'index'])->name('branch.performance');
 
@@ -79,6 +83,22 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/reports/tiktok-live', [TiktokLiveReportController::class, 'store'])->name('reports.tiktok-live.store');
     Route::get('/reports/tiktok-live/{tiktokLive}', [TiktokLiveReportController::class, 'show'])->name('reports.tiktok-live.show');
     Route::delete('/reports/tiktok-live/{tiktokLive}', [TiktokLiveReportController::class, 'destroy'])->name('reports.tiktok-live.destroy');
+
+    // Meta Ads Reports & Prospects
+    Route::get('/reports/meta-ads', [MetaAdsReportController::class, 'index'])->name('reports.meta-ads.index');
+    Route::post('/reports/meta-ads', [MetaAdsReportController::class, 'store'])->name('reports.meta-ads.store');
+    Route::get('/reports/meta-ads/prospects/data', [MetaAdsReportController::class, 'getProspects'])->name('reports.meta-ads.prospects');
+    Route::post('/reports/meta-ads/prospects', [MetaAdsReportController::class, 'storeProspect'])->name('reports.meta-ads.prospects.store');
+    Route::delete('/reports/meta-ads/prospects/{prospect}', [MetaAdsReportController::class, 'destroyProspect'])->name('reports.meta-ads.prospects.destroy');
+    Route::get('/reports/meta-ads/{metaAdsReport}', [MetaAdsReportController::class, 'show'])->name('reports.meta-ads.show');
+    Route::delete('/reports/meta-ads/{metaAdsReport}', [MetaAdsReportController::class, 'destroy'])->name('reports.meta-ads.destroy');
+    Route::delete('/reports/meta-ads/closing-proof/{proof}', [MetaAdsReportController::class, 'destroyClosingProof'])->name('reports.meta-ads.closing-proof.destroy');
+
+    // Google Rating Reports & Daily Testimonials
+    Route::get('/reports/google-rating', [GoogleRatingReportController::class, 'index'])->name('reports.google-rating.index');
+    Route::post('/reports/google-rating/baseline', [GoogleRatingReportController::class, 'storeBaseline'])->name('reports.google-rating.baseline.store');
+    Route::post('/reports/google-rating/testimonial', [GoogleRatingReportController::class, 'storeTestimonial'])->name('reports.google-rating.testimonial.store');
+    Route::delete('/reports/google-rating/testimonial/{testimonial}', [GoogleRatingReportController::class, 'destroyTestimonial'])->name('reports.google-rating.testimonial.destroy');
 
     Route::get('/reports/weekly', [WeeklyReportController::class, 'index'])->name('reports.weekly.index');
     Route::post('/reports/weekly', [WeeklyReportController::class, 'store'])->name('reports.weekly.store');
@@ -101,10 +121,16 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('master/branches', BranchController::class, ['names' => 'master.branches']);
         Route::resource('master/users', UserController::class, ['names' => 'master.users']);
 
-        // KPI Management
-        Route::get('/kpis', [KpiManagementController::class, 'index'])->name('kpis.index');
+        // KPI Management (Target KPI Cabang)
         Route::post('/kpis', [KpiManagementController::class, 'storeOrUpdate'])->name('kpis.store');
         Route::post('/kpis/copy', [KpiManagementController::class, 'copy'])->name('kpis.copy');
+    });
+
+    // Target KPI Cabang & Monitoring (Super Admin, Area Manager, and PIC Digital)
+    Route::get('/kpis', [KpiManagementController::class, 'index'])->name('kpis.index');
+    Route::get('/kpis/branch/{branch}', [KpiManagementController::class, 'getBranchEvaluation'])->name('kpis.branch.evaluation');
+
+    Route::middleware(['role:Super Admin'])->group(function () {
 
         // Kanban To-Do Board
         Route::get('/todo', [TodoController::class, 'index'])->name('todos.index');

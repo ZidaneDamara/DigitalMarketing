@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Export;
 use App\Http\Controllers\Controller;
 use App\Models\Branch;
 use App\Models\DailyReport;
+use App\Models\GoogleRatingMonth;
+use App\Models\GoogleRatingTestimonial;
+use App\Models\MetaAdsReport;
 use App\Models\MonthlyInsight;
 use App\Models\TiktokLiveReport;
 use App\Models\WeeklyReport;
@@ -41,6 +44,9 @@ class ExportController extends Controller
         $weeklyReports = collect();
         $monthlyInsights = collect();
         $tiktokLiveReports = collect();
+        $metaAdsReports = collect();
+        $googleRatingReports = collect();
+        $googleRatingMonth = null;
         $tiktokLiveSummary = null;
         $tiktokLiveBranchRankings = collect();
         $tiktokLiveHostRankings = collect();
@@ -79,6 +85,26 @@ class ExportController extends Controller
             }
             $weeklyReports = $query->latest('tanggal_post')->get();
 
+        } elseif ($type === 'meta_ads') {
+            $metaAdsReports = MetaAdsReport::with(['branch', 'user', 'closingProofs'])
+                ->when($branchId, fn($q) => $q->where('branch_id', $branchId))
+                ->when($bulan, fn($q) => $q->where('bulan', $bulan))
+                ->when($tahun, fn($q) => $q->where('tahun', $tahun))
+                ->latest()
+                ->get();
+
+        } elseif ($type === 'google_rating') {
+            $googleRatingReports = GoogleRatingTestimonial::with(['branch', 'user'])
+                ->when($branchId, fn($q) => $q->where('branch_id', $branchId))
+                ->when($bulan, fn($q) => $q->where('bulan', $bulan))
+                ->when($tahun, fn($q) => $q->where('tahun', $tahun))
+                ->latest('tanggal')
+                ->get();
+            $googleRatingMonth = GoogleRatingMonth::where('tahun', $tahun)
+                ->where('bulan', $bulan)
+                ->when($branchId, fn($q) => $q->where('branch_id', $branchId))
+                ->first();
+
         } else {
             $monthlyInsights = MonthlyInsight::with('branch')
                 ->where('tahun', $tahun)
@@ -89,6 +115,7 @@ class ExportController extends Controller
 
         $pdf = Pdf::loadView('export.pdf_template', compact(
             'type', 'branches', 'dailyReports', 'weeklyReports', 'monthlyInsights', 'tiktokLiveReports',
+            'metaAdsReports', 'googleRatingReports', 'googleRatingMonth',
             'tiktokLiveSummary', 'tiktokLiveBranchRankings', 'tiktokLiveHostRankings',
             'tahun', 'bulan', 'tanggal', 'tanggalAwal', 'tanggalAkhir', 'mingguKe'
         ))->setPaper('a4', 'landscape');
@@ -159,6 +186,22 @@ class ExportController extends Controller
                 $query->where('tahun', $tahun);
             }
             $reports = $query->latest('tanggal_post')->get();
+
+        } elseif ($type === 'meta_ads') {
+            $reports = MetaAdsReport::with(['branch', 'user', 'closingProofs'])
+                ->when($branchId, fn($q) => $q->where('branch_id', $branchId))
+                ->when($bulan, fn($q) => $q->where('bulan', $bulan))
+                ->when($tahun, fn($q) => $q->where('tahun', $tahun))
+                ->latest()
+                ->get();
+
+        } elseif ($type === 'google_rating') {
+            $reports = GoogleRatingTestimonial::with(['branch', 'user'])
+                ->when($branchId, fn($q) => $q->where('branch_id', $branchId))
+                ->when($bulan, fn($q) => $q->where('bulan', $bulan))
+                ->when($tahun, fn($q) => $q->where('tahun', $tahun))
+                ->latest('tanggal')
+                ->get();
 
         } else {
             $reports = MonthlyInsight::with(['branch'])

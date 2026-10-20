@@ -347,6 +347,107 @@
             </tbody>
         </table>
 
+    @elseif($type === 'meta_ads')
+        <h4>Laporan Monthly Meta Ads (Facebook & Instagram Ads)</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 20px;">No</th>
+                    <th>Cabang</th>
+                    <th>Periode</th>
+                    <th>Nama Iklan</th>
+                    <th>Produk</th>
+                    <th class="text-right">Budget Spend</th>
+                    <th class="text-right">Views</th>
+                    <th class="text-center">Percakapan</th>
+                    <th class="text-center">CTR</th>
+                    <th class="text-right">CPC</th>
+                    <th class="text-right">CPM</th>
+                    <th class="text-right">CPL</th>
+                    <th class="text-center">STU Closing</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($metaAdsReports as $index => $row)
+                <tr>
+                    <td class="text-center">{{ $index + 1 }}</td>
+                    <td>{{ $row->branch->nama_cabang ?? '-' }}</td>
+                    <td class="text-center">{{ $row->nama_bulan }} {{ $row->tahun }}</td>
+                    <td><strong>{{ $row->nama_iklan }}</strong></td>
+                    <td>{{ $row->product }}</td>
+                    <td class="text-right">{{ $row->formatted_budget }}</td>
+                    <td class="text-right">{{ number_format($row->total_views) }}</td>
+                    <td class="text-center">{{ number_format($row->total_percakapan) }} Chat</td>
+                    <td class="text-center">{{ number_format($row->ctr, 2) }}%</td>
+                    <td class="text-right">{{ $row->formatted_cpc }}</td>
+                    <td class="text-right">{{ $row->formatted_cpm }}</td>
+                    <td class="text-right">{{ $row->formatted_cpl }}</td>
+                    <td class="text-center"><strong>{{ number_format($row->stu) }} Unit</strong></td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="13" class="text-center">Tidak ada data laporan Meta Ads pada periode ini.</td>
+                </tr>
+                @endforelse
+            </tbody>
+            @if($metaAdsReports->count() > 0)
+            <tfoot>
+                <tr style="font-weight: bold; background-color: #f1f5f9;">
+                    <td colspan="5" class="text-center">TOTAL KONSOLIDASI</td>
+                    <td class="text-right">Rp {{ number_format($metaAdsReports->sum('budget'), 0, ',', '.') }}</td>
+                    <td class="text-right">{{ number_format($metaAdsReports->sum('total_views')) }}</td>
+                    <td class="text-center">{{ number_format($metaAdsReports->sum('total_percakapan')) }} Chat</td>
+                    <td class="text-center">{{ number_format($metaAdsReports->avg('ctr'), 2) }}%</td>
+                    <td class="text-right">Rp {{ number_format($metaAdsReports->avg('cpc'), 0, ',', '.') }}</td>
+                    <td class="text-right">Rp {{ number_format($metaAdsReports->avg('cpm'), 0, ',', '.') }}</td>
+                    <td class="text-right">Rp {{ number_format($metaAdsReports->avg('cpl'), 0, ',', '.') }}</td>
+                    <td class="text-center">{{ number_format($metaAdsReports->sum('stu')) }} Unit</td>
+                </tr>
+            </tfoot>
+            @endif
+        </table>
+
+    @elseif($type === 'google_rating')
+        <h4>Laporan Google Rating & Testimoni Konsumen (Target 125 Review/Bulan - Min. 5/Hari)</h4>
+        @if($googleRatingMonth)
+        <div style="margin-bottom: 10px; padding: 6px; background-color: #f8fafc; border: 1px solid #ccc;">
+            <strong>Baseline Awal Bulan:</strong> {{ number_format($googleRatingMonth->rating_awal_bulan, 2) }} Bintang | 
+            <strong>Total Ulasan Awal:</strong> {{ number_format($googleRatingMonth->total_review_awal_bulan) }} | 
+            <strong>Target Bulanan:</strong> {{ $googleRatingMonth->target_bulanan }} Review | 
+            <strong>Total Terinput:</strong> {{ $googleRatingReports->count() }} Review
+        </div>
+        @endif
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 20px;">No</th>
+                    <th>Cabang</th>
+                    <th class="text-center">Tanggal Review</th>
+                    <th>Nama Reviewer</th>
+                    <th class="text-center">Rating Bintang</th>
+                    <th>Komentar / Ulasan</th>
+                    <th>Diinput Oleh</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($googleRatingReports as $index => $row)
+                <tr>
+                    <td class="text-center">{{ $index + 1 }}</td>
+                    <td>{{ $row->branch->nama_cabang ?? '-' }}</td>
+                    <td class="text-center">{{ $row->formatted_tanggal }}</td>
+                    <td><strong>{{ $row->nama_reviewer }}</strong></td>
+                    <td class="text-center">{{ $row->rating_bintang }} ★</td>
+                    <td>{{ $row->komentar_ulasan ?: '-' }}</td>
+                    <td>{{ $row->user->name ?? '-' }}</td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="7" class="text-center">Tidak ada data testimoni Google Rating pada filter ini.</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+
     @else
         <h4>Detail & Ringkasan Monthly Insights</h4>
         <table>
