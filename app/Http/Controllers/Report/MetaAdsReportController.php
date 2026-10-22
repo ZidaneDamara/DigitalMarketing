@@ -409,24 +409,35 @@ class MetaAdsReportController extends Controller
             ->editColumn('status', fn($row) => $row->status_badge)
             ->editColumn('catatan', fn($row) => $row->catatan ? '<small class="text-muted">' . e($row->catatan) . '</small>' : '<span class="text-muted small fst-italic">-</span>')
             ->addColumn('action', function ($row) use ($user) {
+                $canEdit = $user->hasRole('Super Admin') || $user->hasRole('Area Manager') || ($user->hasRole('PIC Digital Cabang') && $user->branch_id == $row->branch_id);
                 $canDelete = $user->hasRole('Super Admin') || ($user->hasRole('PIC Digital Cabang') && $user->branch_id == $row->branch_id);
-                if ($canDelete) {
-                    return '<button type="button" class="btn btn-sm btn-outline-danger btn-delete-prospect" data-id="' . $row->id . '" title="Hapus Data Prospek"><i class="fas fa-trash"></i></button>';
-                }
-                return '-';
+
+                $btnEdit = $canEdit ? '<button type="button" class="btn btn-sm btn-outline-warning btn-edit-prospect me-1 shadow-xs" data-id="' . $row->id . '" title="Edit Data Prospek"><i class="fas fa-edit"></i></button>' : '';
+                $btnDelete = $canDelete ? '<button type="button" class="btn btn-sm btn-outline-danger btn-delete-prospect shadow-xs" data-id="' . $row->id . '" title="Hapus Data Prospek"><i class="fas fa-trash"></i></button>' : '';
+
+                return '<div class="btn-group">' . $btnEdit . $btnDelete . '</div>';
             })
             ->rawColumns(['nama', 'nomor_hp', 'sumber_leads', 'status', 'catatan', 'action'])
             ->make(true);
     }
 
     /**
-     * Store new Prospect Lead
+     * Show single Prospect Lead JSON for Editing
+     */
+    public function showProspect(MetaAdsProspect $prospect)
+    {
+        return response()->json($prospect->load(['branch', 'user', 'metaAdsReport']));
+    }
+
+    /**
+     * Store or Update Prospect Lead
      */
     public function storeProspect(Request $request)
     {
         $user = Auth::user();
 
         $rules = [
+            'id' => 'nullable|exists:meta_ads_prospects,id',
             'branch_id' => 'required|exists:branches,id',
             'nama' => 'required|string|max:255',
             'nomor_hp' => 'required|string|max:50',
@@ -443,28 +454,51 @@ class MetaAdsReportController extends Controller
 
         $validated = $request->validate($rules);
 
-        $prospect = MetaAdsProspect::create([
-            'branch_id' => $validated['branch_id'],
-            'user_id' => $user->id,
-            'meta_ads_report_id' => $validated['meta_ads_report_id'] ?? null,
-            'nama' => $validated['nama'],
-            'nomor_hp' => $validated['nomor_hp'],
-            'sumber_leads' => $validated['sumber_leads'],
-            'tanggal_input' => $validated['tanggal_input'] ?? now()->toDateString(),
-            'status' => $validated['status'] ?? 'Prospek Baru',
-            'catatan' => $validated['catatan'] ?? null,
-        ]);
+        if ($request->filled('id')) {
+            $prospect = MetaAdsProspect::findOrFail($request->id);
+            if ($user->hasRole('PIC Digital Cabang') && $prospect->branch_id != $user->branch_id) {
+                return response()->json(['success' => false, 'message' => 'Anda tidak memiliki hak untuk mengedit data cabang lain.'], 403);
+            }
+            $action = 'UPDATE';
+            $logMsg = "Mengupdate data prospek Meta Ads: {$validated['nama']} ({$validated['nomor_hp']})";
+            $prospect->update([
+                'branch_id' => $validated['branch_id'],
+                'meta_ads_report_id' => $validated['meta_ads_report_id'] ?? null,
+                'nama' => $validated['nama'],
+                'nomor_hp' => $validated['nomor_hp'],
+                'sumber_leads' => $validated['sumber_leads'],
+                'tanggal_input' => $validated['tanggal_input'] ?? $prospect->tanggal_input,
+                'status' => $validated['status'] ?? $prospect->status,
+                'catatan' => $validated['catatan'] ?? null,
+            ]);
+            $msg = 'Data prospek berhasil diperbarui!';
+        } else {
+            $prospect = MetaAdsProspect::create([
+                'branch_id' => $validated['branch_id'],
+                'user_id' => $user->id,
+                'meta_ads_report_id' => $validated['meta_ads_report_id'] ?? null,
+                'nama' => $validated['nama'],
+                'nomor_hp' => $validated['nomor_hp'],
+                'sumber_leads' => $validated['sumber_leads'],
+                'tanggal_input' => $validated['tanggal_input'] ?? now()->toDateString(),
+                'status' => $validated['status'] ?? 'Prospek Baru',
+                'catatan' => $validated['catatan'] ?? null,
+            ]);
+            $action = 'CREATE';
+            $logMsg = "Menambahkan data prospek baru: {$prospect->nama} ({$prospect->nomor_hp}) dari sumber {$prospect->sumber_leads}";
+            $msg = 'Data prospek berhasil ditambahkan!';
+        }
 
         AuditLogService::log(
-            'CREATE',
+            $action,
             'Meta Ads Prospect',
-            "Menambahkan data prospek baru: {$prospect->nama} ({$prospect->nomor_hp}) dari sumber {$prospect->sumber_leads}"
+            $logMsg
         );
 
         return response()->json([
             'success' => true,
-            'message' => 'Data prospek berhasil ditambahkan!',
-            'data' => $prospect->load(['branch', 'user']),
+            'message' => $msg,
+            'data' => $prospect->load(['branch', 'user', 'metaAdsReport']),
         ]);
     }
 

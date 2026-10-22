@@ -401,8 +401,9 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <form id="formProspect" class="modal-content border-0 shadow-lg" style="border-radius: 1rem; overflow: hidden;">
             @csrf
+            <input type="hidden" name="id" id="prospect_id">
             <div class="modal-header text-white flex-shrink-0" style="background: linear-gradient(135deg, #0d5930 0%, #198754 100%);">
-                <h5 class="modal-title fw-bold">
+                <h5 class="modal-title fw-bold" id="modalProspectTitle">
                     <i class="fab fa-whatsapp text-warning me-2 fs-5"></i> Input Data Prospek Meta Ads
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
@@ -483,6 +484,19 @@
                         <option value="Instagram">📸 Instagram</option>
                         <option value="Facebook">👥 Facebook</option>
                         <option value="WhatsApp">💬 WhatsApp</option>
+                    </select>
+                </div>
+
+                <!-- 4. STATUS PROSPEK -->
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-dark">
+                        <i class="fas fa-tag text-warning me-1"></i> Status Follow Up
+                    </label>
+                    <select name="status" id="prospect_status" class="form-select form-select-lg fs-6 fw-semibold">
+                        <option value="Prospek Baru">⭐ Prospek Baru</option>
+                        <option value="Dihubungi">📞 Sedang Dihubungi</option>
+                        <option value="Closing STU">🏍️ Closing STU</option>
+                        <option value="Tidak Tertarik">❌ Tidak Tertarik</option>
                     </select>
                 </div>
 
@@ -1015,12 +1029,48 @@ $(document).ready(function() {
     });
 
     // ---------------------------------------------------------
-    // 3. ACTION: OPEN MODAL PROSPEK (FORM TERPISAH)
+    // 3. ACTION: OPEN MODAL PROSPEK (INPUT & EDIT)
     // ---------------------------------------------------------
     $('#btnTambahProspect').on('click', function() {
         $('#formProspect')[0].reset();
+        $('#prospect_id').val('');
+        $('#modalProspectTitle').html('<i class="fab fa-whatsapp text-warning me-2 fs-5"></i> Input Data Prospek Meta Ads');
+        $('#btnSubmitProspect').html('<i class="fas fa-check-circle me-1.5"></i> Simpan Data Prospek');
+        $('#prospect_status').val('Prospek Baru');
         $('#prospect_tanggal_input').val(new Date().toISOString().slice(0, 10));
         $('#modalProspect').modal('show');
+    });
+
+    // Edit Prospect Button Click
+    $(document).on('click', '.btn-edit-prospect', function() {
+        const id = $(this).data('id');
+        $.get("{{ url('/reports/meta-ads/prospects') }}/" + id, function(data) {
+            $('#formProspect')[0].reset();
+            $('#prospect_id').val(data.id);
+            $('#modalProspectTitle').html('<i class="fas fa-user-edit text-warning me-2 fs-5"></i> Edit Data Prospek #' + data.id);
+            $('#btnSubmitProspect').html('<i class="fas fa-save me-1.5"></i> Update Data Prospek');
+
+            if ($('#prospect_branch_id').length) {
+                $('#prospect_branch_id').val(data.branch_id);
+            }
+            if (data.tanggal_input) {
+                $('#prospect_tanggal_input').val(data.tanggal_input.slice(0, 10));
+            }
+            $('#prospect_nama').val(data.nama);
+            $('#prospect_nomor_hp').val(data.nomor_hp);
+            $('#prospect_sumber_leads').val(data.sumber_leads);
+            $('#prospect_status').val(data.status || 'Prospek Baru');
+            $('#prospect_meta_ads_report_id').val(data.meta_ads_report_id || '');
+            $('#prospect_catatan').val(data.catatan || '');
+
+            $('#modalProspect').modal('show');
+        }).fail(function(xhr) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal Memuat Data!',
+                text: xhr.responseJSON ? xhr.responseJSON.message : 'Terjadi kesalahan sistem.'
+            });
+        });
     });
 
     // Submit Form Prospect

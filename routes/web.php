@@ -89,6 +89,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/reports/meta-ads', [MetaAdsReportController::class, 'store'])->name('reports.meta-ads.store');
     Route::get('/reports/meta-ads/prospects/data', [MetaAdsReportController::class, 'getProspects'])->name('reports.meta-ads.prospects');
     Route::post('/reports/meta-ads/prospects', [MetaAdsReportController::class, 'storeProspect'])->name('reports.meta-ads.prospects.store');
+    Route::get('/reports/meta-ads/prospects/{prospect}', [MetaAdsReportController::class, 'showProspect'])->name('reports.meta-ads.prospects.show');
     Route::delete('/reports/meta-ads/prospects/{prospect}', [MetaAdsReportController::class, 'destroyProspect'])->name('reports.meta-ads.prospects.destroy');
     Route::get('/reports/meta-ads/{metaAdsReport}', [MetaAdsReportController::class, 'show'])->name('reports.meta-ads.show');
     Route::delete('/reports/meta-ads/{metaAdsReport}', [MetaAdsReportController::class, 'destroy'])->name('reports.meta-ads.destroy');
