@@ -737,45 +737,59 @@
 
                             <!-- Detail Unit Yamaha Terjual (STU) -->
                             <div class="col-12 mt-2">
-                                <label class="form-label small fw-bold text-dark">
-                                    <i class="fas fa-motorcycle text-danger me-1"></i> Unit Yamaha Terjual <span class="text-muted fw-normal">(Jika ada closing STU)</span>
-                                </label>
-                                <select name="unit_terjual" id="form_unit_terjual" class="form-select">
-                                    <option value="">-- Pilih Model Motor Yamaha --</option>
-                                    <option value="GEAR ULTIMA 125 HYBRID">GEAR ULTIMA 125 HYBRID</option>
-                                    <option value="GEAR ULTIMA 125 HYBRID S">GEAR ULTIMA 125 HYBRID S</option>
-                                    <option value="GEAR ULTIMA 125 HYBRID SOLID">GEAR ULTIMA 125 HYBRID SOLID</option>
-                                    <option value="GEAR ULTIMA 125 HYBRID SMART">GEAR ULTIMA 125 HYBRID SMART</option>
-                                    <option value="FAZZIO HYBRID">FAZZIO HYBRID</option>
-                                    <option value="FAZZIO HYBRID NEO">FAZZIO HYBRID NEO</option>
-                                    <option value="FAZZIO HYBRID LUX">FAZZIO HYBRID LUX</option>
-                                    <option value="FAZZIO STARRY NIGHT">FAZZIO STARRY NIGHT</option>
-                                    <option value="GRAND FILANO HYBRID NEO">GRAND FILANO HYBRID NEO</option>
-                                    <option value="GRAND FILANO HYBRID LUX">GRAND FILANO HYBRID LUX</option>
-                                    <option value="FREEGO 125">FREEGO 125</option>
-                                    <option value="VEGA FORCE DB CW">VEGA FORCE DB CW</option>
-                                    <option value="JUPITER Z CW FI">JUPITER Z CW FI</option>
-                                    <option value="MX KING 150">MX KING 150</option>
-                                    <option value="MX KING 150 PRIMA PRAMAC">MX KING 150 PRIMA PRAMAC</option>
-                                    <option value="LEXI LX 155 C">LEXI LX 155 C</option>
-                                    <option value="LEXI LX 155 S C">LEXI LX 155 S C</option>
-                                    <option value="ALL NEW AEROX 155">ALL NEW AEROX 155</option>
-                                    <option value="ALL NEW AEROX 155 CYBERCITY">ALL NEW AEROX 155 CYBERCITY</option>
-                                    <option value="AEROX ALPHA">AEROX ALPHA</option>
-                                    <option value="AEROX ALPHA CYBERCITY ABS">AEROX ALPHA CYBERCITY ABS</option>
-                                    <option value="AEROX ALPHA TURBO">AEROX ALPHA TURBO</option>
-                                    <option value="NMAX NEO">NMAX NEO</option>
-                                    <option value="NMAX NEO S">NMAX NEO S</option>
-                                    <option value="NMAX TURBO">NMAX TURBO</option>
-                                    <option value="NMAX TURBO TECH MAX">NMAX TURBO TECH MAX</option>
-                                    <option value="XMAX C">XMAX C</option>
-                                    <option value="XMAX TECH MAX">XMAX TECH MAX</option>
-                                    <option value="ALL NEW VIXION">ALL NEW VIXION</option>
-                                    <option value="WR 155 R">WR 155 R</option>
-                                    <option value="ALL NEW XSR 155">ALL NEW XSR 155</option>
-                                    <option value="ALL NEW R15 C">ALL NEW R15 C</option>
-                                </select>
-                                <small class="text-muted" style="font-size: 0.72rem;">Pilih model unit motor Yamaha yang berhasil closing STU dari kampanye iklan ini.</small>
+                                <div class="d-flex align-items-center justify-content-between mb-1.5">
+                                    <label class="form-label small fw-bold text-dark m-0">
+                                        <i class="fas fa-motorcycle text-danger me-1"></i> Unit Yamaha Terjual <span class="text-muted fw-normal">(Jika ada closing STU)</span>
+                                    </label>
+                                    <button type="button" class="btn btn-sm btn-outline-danger py-0 px-2.5 rounded-pill fw-semibold shadow-xs" id="btnAddUnitTerjual" style="font-size: 0.78rem; height: 26px;">
+                                        <i class="fas fa-plus me-1"></i> Tambah Motor
+                                    </button>
+                                </div>
+                                <div id="unitTerjualContainer" class="d-flex flex-column gap-2">
+                                    <div class="unit-terjual-item d-flex align-items-center gap-2">
+                                        <div class="flex-grow-1">
+                                            <select name="unit_terjual[]" class="form-select select-unit-terjual">
+                                                <option value="">-- Pilih Model Motor Yamaha --</option>
+                                                <option value="GEAR ULTIMA 125 HYBRID">GEAR ULTIMA 125 HYBRID</option>
+                                                <option value="GEAR ULTIMA 125 HYBRID S">GEAR ULTIMA 125 HYBRID S</option>
+                                                <option value="GEAR ULTIMA 125 HYBRID SOLID">GEAR ULTIMA 125 HYBRID SOLID</option>
+                                                <option value="GEAR ULTIMA 125 HYBRID SMART">GEAR ULTIMA 125 HYBRID SMART</option>
+                                                <option value="FAZZIO HYBRID">FAZZIO HYBRID</option>
+                                                <option value="FAZZIO HYBRID NEO">FAZZIO HYBRID NEO</option>
+                                                <option value="FAZZIO HYBRID LUX">FAZZIO HYBRID LUX</option>
+                                                <option value="FAZZIO STARRY NIGHT">FAZZIO STARRY NIGHT</option>
+                                                <option value="GRAND FILANO HYBRID NEO">GRAND FILANO HYBRID NEO</option>
+                                                <option value="GRAND FILANO HYBRID LUX">GRAND FILANO HYBRID LUX</option>
+                                                <option value="FREEGO 125">FREEGO 125</option>
+                                                <option value="VEGA FORCE DB CW">VEGA FORCE DB CW</option>
+                                                <option value="JUPITER Z CW FI">JUPITER Z CW FI</option>
+                                                <option value="MX KING 150">MX KING 150</option>
+                                                <option value="MX KING 150 PRIMA PRAMAC">MX KING 150 PRIMA PRAMAC</option>
+                                                <option value="LEXI LX 155 C">LEXI LX 155 C</option>
+                                                <option value="LEXI LX 155 S C">LEXI LX 155 S C</option>
+                                                <option value="ALL NEW AEROX 155">ALL NEW AEROX 155</option>
+                                                <option value="ALL NEW AEROX 155 CYBERCITY">ALL NEW AEROX 155 CYBERCITY</option>
+                                                <option value="AEROX ALPHA">AEROX ALPHA</option>
+                                                <option value="AEROX ALPHA CYBERCITY ABS">AEROX ALPHA CYBERCITY ABS</option>
+                                                <option value="AEROX ALPHA TURBO">AEROX ALPHA TURBO</option>
+                                                <option value="NMAX NEO">NMAX NEO</option>
+                                                <option value="NMAX NEO S">NMAX NEO S</option>
+                                                <option value="NMAX TURBO">NMAX TURBO</option>
+                                                <option value="NMAX TURBO TECH MAX">NMAX TURBO TECH MAX</option>
+                                                <option value="XMAX C">XMAX C</option>
+                                                <option value="XMAX TECH MAX">XMAX TECH MAX</option>
+                                                <option value="ALL NEW VIXION">ALL NEW VIXION</option>
+                                                <option value="WR 155 R">WR 155 R</option>
+                                                <option value="ALL NEW XSR 155">ALL NEW XSR 155</option>
+                                                <option value="ALL NEW R15 C">ALL NEW R15 C</option>
+                                            </select>
+                                        </div>
+                                        <button type="button" class="btn btn-outline-danger btn-sm btn-remove-unit d-none" title="Hapus unit ini" style="min-width: 38px; height: 38px; flex-shrink: 0;">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <small class="text-muted d-block mt-1" style="font-size: 0.72rem;">Pilih model unit motor Yamaha yang berhasil closing STU dari kampanye iklan ini. Klik tombol <strong>+ Tambah Motor</strong> jika closing lebih dari 1 unit motor.</small>
                             </div>
                         </div>
                     </div>
@@ -1091,10 +1105,100 @@ $(document).ready(function() {
     // ---------------------------------------------------------
     // 4. ACTION: OPEN MODAL REPORT META ADS & FILE PDF HANDLING
     // ---------------------------------------------------------
+    const yamahaModelOptionsHtml = `
+        <option value="">-- Pilih Model Motor Yamaha --</option>
+        <option value="GEAR ULTIMA 125 HYBRID">GEAR ULTIMA 125 HYBRID</option>
+        <option value="GEAR ULTIMA 125 HYBRID S">GEAR ULTIMA 125 HYBRID S</option>
+        <option value="GEAR ULTIMA 125 HYBRID SOLID">GEAR ULTIMA 125 HYBRID SOLID</option>
+        <option value="GEAR ULTIMA 125 HYBRID SMART">GEAR ULTIMA 125 HYBRID SMART</option>
+        <option value="FAZZIO HYBRID">FAZZIO HYBRID</option>
+        <option value="FAZZIO HYBRID NEO">FAZZIO HYBRID NEO</option>
+        <option value="FAZZIO HYBRID LUX">FAZZIO HYBRID LUX</option>
+        <option value="FAZZIO STARRY NIGHT">FAZZIO STARRY NIGHT</option>
+        <option value="GRAND FILANO HYBRID NEO">GRAND FILANO HYBRID NEO</option>
+        <option value="GRAND FILANO HYBRID LUX">GRAND FILANO HYBRID LUX</option>
+        <option value="FREEGO 125">FREEGO 125</option>
+        <option value="VEGA FORCE DB CW">VEGA FORCE DB CW</option>
+        <option value="JUPITER Z CW FI">JUPITER Z CW FI</option>
+        <option value="MX KING 150">MX KING 150</option>
+        <option value="MX KING 150 PRIMA PRAMAC">MX KING 150 PRIMA PRAMAC</option>
+        <option value="LEXI LX 155 C">LEXI LX 155 C</option>
+        <option value="LEXI LX 155 S C">LEXI LX 155 S C</option>
+        <option value="ALL NEW AEROX 155">ALL NEW AEROX 155</option>
+        <option value="ALL NEW AEROX 155 CYBERCITY">ALL NEW AEROX 155 CYBERCITY</option>
+        <option value="AEROX ALPHA">AEROX ALPHA</option>
+        <option value="AEROX ALPHA CYBERCITY ABS">AEROX ALPHA CYBERCITY ABS</option>
+        <option value="AEROX ALPHA TURBO">AEROX ALPHA TURBO</option>
+        <option value="NMAX NEO">NMAX NEO</option>
+        <option value="NMAX NEO S">NMAX NEO S</option>
+        <option value="NMAX TURBO">NMAX TURBO</option>
+        <option value="NMAX TURBO TECH MAX">NMAX TURBO TECH MAX</option>
+        <option value="XMAX C">XMAX C</option>
+        <option value="XMAX TECH MAX">XMAX TECH MAX</option>
+        <option value="ALL NEW VIXION">ALL NEW VIXION</option>
+        <option value="WR 155 R">WR 155 R</option>
+        <option value="ALL NEW XSR 155">ALL NEW XSR 155</option>
+        <option value="ALL NEW R15 C">ALL NEW R15 C</option>
+    `;
+
+    function createUnitTerjualRow(selectedValue = '') {
+        const row = $(`
+            <div class="unit-terjual-item d-flex align-items-center gap-2">
+                <div class="flex-grow-1">
+                    <select name="unit_terjual[]" class="form-select select-unit-terjual">
+                        ${yamahaModelOptionsHtml}
+                    </select>
+                </div>
+                <button type="button" class="btn btn-outline-danger btn-sm btn-remove-unit" title="Hapus unit ini" style="min-width: 38px; height: 38px; flex-shrink: 0;">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
+        `);
+        if (selectedValue) {
+            row.find('.select-unit-terjual').val(selectedValue);
+        }
+        return row;
+    }
+
+    function updateUnitRemoveButtons() {
+        const items = $('#unitTerjualContainer .unit-terjual-item');
+        if (items.length <= 1) {
+            items.find('.btn-remove-unit').addClass('d-none');
+        } else {
+            items.find('.btn-remove-unit').removeClass('d-none');
+        }
+    }
+
+    function setUnitTerjualValues(units) {
+        $('#unitTerjualContainer').empty();
+        if (!units || units.length === 0) {
+            $('#unitTerjualContainer').append(createUnitTerjualRow(''));
+        } else {
+            units.forEach(u => {
+                $('#unitTerjualContainer').append(createUnitTerjualRow(u.trim()));
+            });
+        }
+        updateUnitRemoveButtons();
+    }
+
+    // Add unit row button
+    $('#btnAddUnitTerjual').on('click', function() {
+        const newRow = createUnitTerjualRow('');
+        $('#unitTerjualContainer').append(newRow);
+        updateUnitRemoveButtons();
+        newRow.find('.select-unit-terjual').focus();
+    });
+
+    // Remove unit row button
+    $(document).on('click', '.btn-remove-unit', function() {
+        $(this).closest('.unit-terjual-item').remove();
+        updateUnitRemoveButtons();
+    });
+
     $('#btnTambahReport').on('click', function() {
         $('#formMetaAds')[0].reset();
         $('#report_id').val('');
-        $('#form_unit_terjual').val('');
+        setUnitTerjualValues([]);
         $('#modalMetaAdsTitle').html('<i class="fab fa-facebook me-2 text-info"></i> Input Monthly Report Meta Ads');
         $('#preview_bukti_topup_container').addClass('d-none');
         $('#selected_pdf_info').addClass('d-none');
@@ -1198,7 +1302,11 @@ $(document).ready(function() {
             $('#form_total_percakapan').val(data.total_percakapan);
             $('#form_budget').val(data.budget);
             $('#form_stu').val(data.stu);
-            $('#form_unit_terjual').val(data.unit_terjual || '');
+            let units = [];
+            if (data.unit_terjual) {
+                units = data.unit_terjual.split(',').map(s => s.trim()).filter(Boolean);
+            }
+            setUnitTerjualValues(units);
             $('#form_catatan').val(data.catatan);
 
             // Existing Invoice PDF
@@ -1392,6 +1500,14 @@ $(document).ready(function() {
                                 </div>
                             </div>
                             <div class="mt-2 text-muted small">Conversion Rate Chat-to-Closing: <strong>${convRate}</strong></div>
+                            ${data.unit_terjual ? `
+                                <div class="mt-2 pt-2 border-top border-danger border-opacity-25 small text-dark">
+                                    <div class="text-danger fw-semibold mb-1"><i class="fas fa-motorcycle me-1"></i> Unit Yamaha Terjual:</div>
+                                    <div class="d-flex flex-wrap gap-1">
+                                        ${data.unit_terjual.split(',').map(u => `<span class="badge bg-white text-danger border border-danger-subtle">${u.trim()}</span>`).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
                         </div>
                     </div>
                     <div class="col-12 col-md-6">

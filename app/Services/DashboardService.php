@@ -382,21 +382,51 @@ class DashboardService
             $modelName = $item['model'];
             $normalizedModel = strtolower(trim($modelName));
 
-            // Match from adsReports (either product name or unit_terjual matches)
-            $matchedAds = $adsReports->filter(function ($ad) use ($normalizedModel) {
+            $pStuAds = 0;
+            $matchedAds = $adsReports->filter(function ($ad) use ($normalizedModel, &$pStuAds) {
                 $p = strtolower(trim($ad->product ?? ''));
-                $u = strtolower(trim($ad->unit_terjual ?? ''));
-                return $p === $normalizedModel || $u === $normalizedModel || str_contains($p, $normalizedModel) || str_contains($u, $normalizedModel);
+                $unitsInAd = !empty($ad->unit_terjual)
+                    ? array_values(array_filter(array_map('trim', explode(',', strtolower($ad->unit_terjual)))))
+                    : [];
+
+                $modelCountInAd = count(array_keys($unitsInAd, $normalizedModel));
+
+                if ($modelCountInAd > 0) {
+                    if (count($unitsInAd) > 1) {
+                        $pStuAds += $modelCountInAd;
+                    } else {
+                        $pStuAds += (int) ($ad->stu ?? 0);
+                    }
+                    return true;
+                }
+
+                if (empty($unitsInAd) && ($p === $normalizedModel || str_contains($p, $normalizedModel))) {
+                    $pStuAds += (int) ($ad->stu ?? 0);
+                    return true;
+                }
+
+                return false;
             });
 
-            // Match from liveReports (unit_terjual matches)
-            $matchedLive = $liveReports->filter(function ($live) use ($normalizedModel) {
-                $u = strtolower(trim($live->unit_terjual ?? ''));
-                return $u === $normalizedModel || str_contains($u, $normalizedModel);
-            });
+            $pStuLive = 0;
+            $matchedLive = $liveReports->filter(function ($live) use ($normalizedModel, &$pStuLive) {
+                $unitsInLive = !empty($live->unit_terjual)
+                    ? array_values(array_filter(array_map('trim', explode(',', strtolower($live->unit_terjual)))))
+                    : [];
 
-            $pStuAds = (int) $matchedAds->sum('stu');
-            $pStuLive = (int) $matchedLive->sum('stu');
+                $modelCountInLive = count(array_keys($unitsInLive, $normalizedModel));
+
+                if ($modelCountInLive > 0) {
+                    if (count($unitsInLive) > 1) {
+                        $pStuLive += $modelCountInLive;
+                    } else {
+                        $pStuLive += (int) ($live->stu ?? 0);
+                    }
+                    return true;
+                }
+
+                return false;
+            });
             $pTotalStu = $pStuAds + $pStuLive;
             $pBudget = (float) $matchedAds->sum('budget');
             $pPercakapan = (int) $matchedAds->sum('total_percakapan');

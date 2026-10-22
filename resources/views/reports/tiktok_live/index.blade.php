@@ -409,42 +409,57 @@
                         </div>
 
                         <div class="col-12 col-md-8">
-                            <label class="form-label fw-semibold small">Unit Yamaha Terjual <span class="text-muted">(Jika ada closing STU)</span></label>
-                            <select name="unit_terjual" id="form_unit_terjual" class="form-select rounded-3 shadow-none">
-                                <option value="">-- Pilih Model Motor Yamaha --</option>
-                                <option value="GEAR ULTIMA 125 HYBRID">GEAR ULTIMA 125 HYBRID</option>
-                                <option value="GEAR ULTIMA 125 HYBRID S">GEAR ULTIMA 125 HYBRID S</option>
-                                <option value="GEAR ULTIMA 125 HYBRID SOLID">GEAR ULTIMA 125 HYBRID SOLID</option>
-                                <option value="GEAR ULTIMA 125 HYBRID SMART">GEAR ULTIMA 125 HYBRID SMART</option>
-                                <option value="FAZZIO HYBRID">FAZZIO HYBRID</option>
-                                <option value="FAZZIO HYBRID NEO">FAZZIO HYBRID NEO</option>
-                                <option value="FAZZIO HYBRID LUX">FAZZIO HYBRID LUX</option>
-                                <option value="FAZZIO STARRY NIGHT">FAZZIO STARRY NIGHT</option>
-                                <option value="GRAND FILANO HYBRID NEO">GRAND FILANO HYBRID NEO</option>
-                                <option value="GRAND FILANO HYBRID LUX">GRAND FILANO HYBRID LUX</option>
-                                <option value="FREEGO 125">FREEGO 125</option>
-                                <option value="VEGA FORCE DB CW">VEGA FORCE DB CW</option>
-                                <option value="JUPITER Z CW FI">JUPITER Z CW FI</option>
-                                <option value="MX KING 150">MX KING 150</option>
-                                <option value="MX KING 150 PRIMA PRAMAC">MX KING 150 PRIMA PRAMAC</option>
-                                <option value="LEXI LX 155 C">LEXI LX 155 C</option>
-                                <option value="LEXI LX 155 S C">LEXI LX 155 S C</option>
-                                <option value="ALL NEW AEROX 155">ALL NEW AEROX 155</option>
-                                <option value="ALL NEW AEROX 155 CYBERCITY">ALL NEW AEROX 155 CYBERCITY</option>
-                                <option value="AEROX ALPHA">AEROX ALPHA</option>
-                                <option value="AEROX ALPHA CYBERCITY ABS">AEROX ALPHA CYBERCITY ABS</option>
-                                <option value="AEROX ALPHA TURBO">AEROX ALPHA TURBO</option>
-                                <option value="NMAX NEO">NMAX NEO</option>
-                                <option value="NMAX NEO S">NMAX NEO S</option>
-                                <option value="NMAX TURBO">NMAX TURBO</option>
-                                <option value="NMAX TURBO TECH MAX">NMAX TURBO TECH MAX</option>
-                                <option value="XMAX C">XMAX C</option>
-                                <option value="XMAX TECH MAX">XMAX TECH MAX</option>
-                                <option value="ALL NEW VIXION">ALL NEW VIXION</option>
-                                <option value="WR 155 R">WR 155 R</option>
-                                <option value="ALL NEW XSR 155">ALL NEW XSR 155</option>
-                                <option value="ALL NEW R15 C">ALL NEW R15 C</option>
-                            </select>
+                            <div class="d-flex align-items-center justify-content-between mb-1.5">
+                                <label class="form-label fw-semibold small m-0">Unit Yamaha Terjual <span class="text-muted">(Jika ada closing STU)</span></label>
+                                <button type="button" class="btn btn-sm btn-outline-danger py-0 px-2 rounded-pill fw-semibold shadow-xs" id="btnAddLiveUnitTerjual" style="font-size: 0.78rem; height: 26px;">
+                                    <i class="fas fa-plus me-1"></i> Tambah Motor
+                                </button>
+                            </div>
+                            <div id="liveUnitTerjualContainer" class="d-flex flex-column gap-2">
+                                <div class="unit-terjual-item d-flex align-items-center gap-2">
+                                    <div class="flex-grow-1">
+                                        <select name="unit_terjual[]" class="form-select rounded-3 shadow-none select-live-unit-terjual">
+                                            <option value="">-- Pilih Model Motor Yamaha --</option>
+                                            <option value="GEAR ULTIMA 125 HYBRID">GEAR ULTIMA 125 HYBRID</option>
+                                            <option value="GEAR ULTIMA 125 HYBRID S">GEAR ULTIMA 125 HYBRID S</option>
+                                            <option value="GEAR ULTIMA 125 HYBRID SOLID">GEAR ULTIMA 125 HYBRID SOLID</option>
+                                            <option value="GEAR ULTIMA 125 HYBRID SMART">GEAR ULTIMA 125 HYBRID SMART</option>
+                                            <option value="FAZZIO HYBRID">FAZZIO HYBRID</option>
+                                            <option value="FAZZIO HYBRID NEO">FAZZIO HYBRID NEO</option>
+                                            <option value="FAZZIO HYBRID LUX">FAZZIO HYBRID LUX</option>
+                                            <option value="FAZZIO STARRY NIGHT">FAZZIO STARRY NIGHT</option>
+                                            <option value="GRAND FILANO HYBRID NEO">GRAND FILANO HYBRID NEO</option>
+                                            <option value="GRAND FILANO HYBRID LUX">GRAND FILANO HYBRID LUX</option>
+                                            <option value="FREEGO 125">FREEGO 125</option>
+                                            <option value="VEGA FORCE DB CW">VEGA FORCE DB CW</option>
+                                            <option value="JUPITER Z CW FI">JUPITER Z CW FI</option>
+                                            <option value="MX KING 150">MX KING 150</option>
+                                            <option value="MX KING 150 PRIMA PRAMAC">MX KING 150 PRIMA PRAMAC</option>
+                                            <option value="LEXI LX 155 C">LEXI LX 155 C</option>
+                                            <option value="LEXI LX 155 S C">LEXI LX 155 S C</option>
+                                            <option value="ALL NEW AEROX 155">ALL NEW AEROX 155</option>
+                                            <option value="ALL NEW AEROX 155 CYBERCITY">ALL NEW AEROX 155 CYBERCITY</option>
+                                            <option value="AEROX ALPHA">AEROX ALPHA</option>
+                                            <option value="AEROX ALPHA CYBERCITY ABS">AEROX ALPHA CYBERCITY ABS</option>
+                                            <option value="AEROX ALPHA TURBO">AEROX ALPHA TURBO</option>
+                                            <option value="NMAX NEO">NMAX NEO</option>
+                                            <option value="NMAX NEO S">NMAX NEO S</option>
+                                            <option value="NMAX TURBO">NMAX TURBO</option>
+                                            <option value="NMAX TURBO TECH MAX">NMAX TURBO TECH MAX</option>
+                                            <option value="XMAX C">XMAX C</option>
+                                            <option value="XMAX TECH MAX">XMAX TECH MAX</option>
+                                            <option value="ALL NEW VIXION">ALL NEW VIXION</option>
+                                            <option value="WR 155 R">WR 155 R</option>
+                                            <option value="ALL NEW XSR 155">ALL NEW XSR 155</option>
+                                            <option value="ALL NEW R15 C">ALL NEW R15 C</option>
+                                        </select>
+                                    </div>
+                                    <button type="button" class="btn btn-outline-danger btn-sm btn-remove-live-unit d-none" title="Hapus unit ini" style="min-width: 38px; height: 38px; flex-shrink: 0;">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <small class="text-muted d-block mt-1" style="font-size: 0.72rem;">Klik tombol <strong>+ Tambah Motor</strong> jika closing lebih dari 1 unit motor.</small>
                         </div>
 
                         <!-- Upload Bukti Screenshot -->
@@ -838,11 +853,100 @@
             window.location.href = url;
         });
 
+        // Dynamic Yamaha Models Helper for TikTok Live
+        const yamahaModelOptionsHtml = `
+            <option value="">-- Pilih Model Motor Yamaha --</option>
+            <option value="GEAR ULTIMA 125 HYBRID">GEAR ULTIMA 125 HYBRID</option>
+            <option value="GEAR ULTIMA 125 HYBRID S">GEAR ULTIMA 125 HYBRID S</option>
+            <option value="GEAR ULTIMA 125 HYBRID SOLID">GEAR ULTIMA 125 HYBRID SOLID</option>
+            <option value="GEAR ULTIMA 125 HYBRID SMART">GEAR ULTIMA 125 HYBRID SMART</option>
+            <option value="FAZZIO HYBRID">FAZZIO HYBRID</option>
+            <option value="FAZZIO HYBRID NEO">FAZZIO HYBRID NEO</option>
+            <option value="FAZZIO HYBRID LUX">FAZZIO HYBRID LUX</option>
+            <option value="FAZZIO STARRY NIGHT">FAZZIO STARRY NIGHT</option>
+            <option value="GRAND FILANO HYBRID NEO">GRAND FILANO HYBRID NEO</option>
+            <option value="GRAND FILANO HYBRID LUX">GRAND FILANO HYBRID LUX</option>
+            <option value="FREEGO 125">FREEGO 125</option>
+            <option value="VEGA FORCE DB CW">VEGA FORCE DB CW</option>
+            <option value="JUPITER Z CW FI">JUPITER Z CW FI</option>
+            <option value="MX KING 150">MX KING 150</option>
+            <option value="MX KING 150 PRIMA PRAMAC">MX KING 150 PRIMA PRAMAC</option>
+            <option value="LEXI LX 155 C">LEXI LX 155 C</option>
+            <option value="LEXI LX 155 S C">LEXI LX 155 S C</option>
+            <option value="ALL NEW AEROX 155">ALL NEW AEROX 155</option>
+            <option value="ALL NEW AEROX 155 CYBERCITY">ALL NEW AEROX 155 CYBERCITY</option>
+            <option value="AEROX ALPHA">AEROX ALPHA</option>
+            <option value="AEROX ALPHA CYBERCITY ABS">AEROX ALPHA CYBERCITY ABS</option>
+            <option value="AEROX ALPHA TURBO">AEROX ALPHA TURBO</option>
+            <option value="NMAX NEO">NMAX NEO</option>
+            <option value="NMAX NEO S">NMAX NEO S</option>
+            <option value="NMAX TURBO">NMAX TURBO</option>
+            <option value="NMAX TURBO TECH MAX">NMAX TURBO TECH MAX</option>
+            <option value="XMAX C">XMAX C</option>
+            <option value="XMAX TECH MAX">XMAX TECH MAX</option>
+            <option value="ALL NEW VIXION">ALL NEW VIXION</option>
+            <option value="WR 155 R">WR 155 R</option>
+            <option value="ALL NEW XSR 155">ALL NEW XSR 155</option>
+            <option value="ALL NEW R15 C">ALL NEW R15 C</option>
+        `;
+
+        function createLiveUnitTerjualRow(selectedValue = '') {
+            const row = $(`
+                <div class="unit-terjual-item d-flex align-items-center gap-2">
+                    <div class="flex-grow-1">
+                        <select name="unit_terjual[]" class="form-select rounded-3 shadow-none select-live-unit-terjual">
+                            ${yamahaModelOptionsHtml}
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-outline-danger btn-sm btn-remove-live-unit" title="Hapus unit ini" style="min-width: 38px; height: 38px; flex-shrink: 0;">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            `);
+            if (selectedValue) {
+                row.find('.select-live-unit-terjual').val(selectedValue);
+            }
+            return row;
+        }
+
+        function updateLiveUnitRemoveButtons() {
+            const items = $('#liveUnitTerjualContainer .unit-terjual-item');
+            if (items.length <= 1) {
+                items.find('.btn-remove-live-unit').addClass('d-none');
+            } else {
+                items.find('.btn-remove-live-unit').removeClass('d-none');
+            }
+        }
+
+        function setLiveUnitTerjualValues(units) {
+            $('#liveUnitTerjualContainer').empty();
+            if (!units || units.length === 0) {
+                $('#liveUnitTerjualContainer').append(createLiveUnitTerjualRow(''));
+            } else {
+                units.forEach(u => {
+                    $('#liveUnitTerjualContainer').append(createLiveUnitTerjualRow(u.trim()));
+                });
+            }
+            updateLiveUnitRemoveButtons();
+        }
+
+        $('#btnAddLiveUnitTerjual').on('click', function() {
+            const newRow = createLiveUnitTerjualRow('');
+            $('#liveUnitTerjualContainer').append(newRow);
+            updateLiveUnitRemoveButtons();
+            newRow.find('.select-live-unit-terjual').focus();
+        });
+
+        $(document).on('click', '.btn-remove-live-unit', function() {
+            $(this).closest('.unit-terjual-item').remove();
+            updateLiveUnitRemoveButtons();
+        });
+
         // Open Modal Tambah
         $('#btnTambahLaporan').on('click', function() {
             $('#formLiveTikTok')[0].reset();
             $('#report_id').val('');
-            $('#form_unit_terjual').val('');
+            setLiveUnitTerjualValues([]);
             $('#modalTitle').html('<i class="fab fa-tiktok me-2"></i> Input Laporan Live TikTok');
             $('#previewContainer').addClass('d-none');
             $('#imagePreview').attr('src', '');
@@ -920,7 +1024,11 @@
                 $('#form_jumlah_komentar').val(data.jumlah_komentar);
                 $('#form_jumlah_share').val(data.jumlah_share);
                 $('#form_stu').val(data.stu);
-                $('#form_unit_terjual').val(data.unit_terjual || '');
+                let units = [];
+                if (data.unit_terjual) {
+                    units = data.unit_terjual.split(',').map(s => s.trim()).filter(Boolean);
+                }
+                setLiveUnitTerjualValues(units);
                 $('#form_catatan').val(data.catatan);
 
                 if (data.bukti_screenshot) {

@@ -47,7 +47,15 @@ class TiktokLiveReportController extends Controller
                 ->addColumn('jumlah_share', fn($row) => number_format($row->jumlah_share))
                 ->addColumn('stu', function ($row) {
                     if ($row->stu !== null && $row->stu > 0) {
-                        $unitInfo = $row->unit_terjual ? '<br><span class="badge bg-light text-dark border mt-1"><i class="fas fa-motorcycle text-danger me-1"></i>' . e($row->unit_terjual) . '</span>' : '';
+                        $unitInfo = '';
+                        if ($row->unit_terjual) {
+                            $units = array_filter(array_map('trim', explode(',', $row->unit_terjual)));
+                            $unitInfo = '<div class="d-flex flex-wrap gap-1 mt-1 justify-content-center">';
+                            foreach ($units as $u) {
+                                $unitInfo .= '<span class="badge bg-light text-dark border shadow-xs" style="font-size: 0.68rem;"><i class="fas fa-motorcycle text-danger me-1"></i>' . e($u) . '</span>';
+                            }
+                            $unitInfo .= '</div>';
+                        }
                         return '<span class="badge bg-success-subtle text-success border border-success fw-bold px-2 py-1">' . number_format($row->stu) . ' Unit</span>' . $unitInfo;
                     }
                     return '<span class="text-muted small">-</span>';
@@ -311,7 +319,19 @@ class TiktokLiveReportController extends Controller
         $report->jumlah_komentar = $data['jumlah_komentar'] ?? 0;
         $report->jumlah_share = $data['jumlah_share'] ?? 0;
         $report->stu = array_key_exists('stu', $data) ? $data['stu'] : null;
-        $report->unit_terjual = $data['unit_terjual'] ?? null;
+
+        if ($request->has('unit_terjual')) {
+            $inputUnits = $request->input('unit_terjual');
+            if (is_array($inputUnits)) {
+                $cleaned = array_values(array_filter(array_map('trim', $inputUnits), fn($val) => !empty($val)));
+                $report->unit_terjual = !empty($cleaned) ? implode(', ', $cleaned) : null;
+            } else {
+                $report->unit_terjual = !empty(trim($inputUnits)) ? trim($inputUnits) : null;
+            }
+        } else {
+            $report->unit_terjual = null;
+        }
+
         $report->catatan = $data['catatan'] ?? null;
 
         if ($request->hasFile('bukti_screenshot')) {

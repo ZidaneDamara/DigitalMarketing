@@ -53,7 +53,15 @@ class MetaAdsReportController extends Controller
                 ->editColumn('cpm', fn($row) => $row->formatted_cpm)
                 ->editColumn('cpl', fn($row) => '<span class="badge bg-info-subtle text-info border border-info fw-bold px-2 py-1">' . $row->formatted_cpl . '</span>')
                 ->editColumn('stu', function ($row) {
-                    $unitInfo = $row->unit_terjual ? '<br><span class="badge bg-light text-dark border mt-1"><i class="fas fa-motorcycle text-danger me-1"></i>' . e($row->unit_terjual) . '</span>' : '';
+                    $unitInfo = '';
+                    if ($row->unit_terjual) {
+                        $units = array_filter(array_map('trim', explode(',', $row->unit_terjual)));
+                        $unitInfo = '<div class="d-flex flex-wrap gap-1 mt-1 justify-content-center">';
+                        foreach ($units as $u) {
+                            $unitInfo .= '<span class="badge bg-light text-dark border shadow-xs" style="font-size: 0.68rem;"><i class="fas fa-motorcycle text-danger me-1"></i>' . e($u) . '</span>';
+                        }
+                        $unitInfo .= '</div>';
+                    }
                     return '<span class="badge bg-danger text-white fw-bold px-2.5 py-1.5 fs-7"><i class="fas fa-motorcycle me-1"></i>' . number_format($row->stu) . ' Unit</span>' . $unitInfo;
                 })
                 ->addColumn('bukti_topup_btn', function ($row) {
@@ -187,7 +195,7 @@ class MetaAdsReportController extends Controller
             'total_percakapan' => 'required|integer|min:0',
             'budget' => 'required|numeric|min:0',
             'stu' => 'required|integer|min:0',
-            'unit_terjual' => 'nullable|string|max:255',
+            'unit_terjual' => 'nullable',
             'catatan' => 'nullable|string',
             'bukti_topup' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:20480', // Support PDF & Image
             'bukti_closing_stu.*' => 'nullable|image|max:10240',
@@ -228,7 +236,19 @@ class MetaAdsReportController extends Controller
         $report->total_percakapan = $validated['total_percakapan'];
         $report->budget = $validated['budget'];
         $report->stu = $validated['stu'];
-        $report->unit_terjual = $validated['unit_terjual'] ?? null;
+
+        if ($request->has('unit_terjual')) {
+            $inputUnits = $request->input('unit_terjual');
+            if (is_array($inputUnits)) {
+                $cleaned = array_values(array_filter(array_map('trim', $inputUnits), fn($val) => !empty($val)));
+                $report->unit_terjual = !empty($cleaned) ? implode(', ', $cleaned) : null;
+            } else {
+                $report->unit_terjual = !empty(trim($inputUnits)) ? trim($inputUnits) : null;
+            }
+        } else {
+            $report->unit_terjual = null;
+        }
+
         $report->catatan = $validated['catatan'] ?? null;
 
         // Bukti Topup Upload
