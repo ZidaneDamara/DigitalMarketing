@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
         $areaManagerRole = Role::firstOrCreate(['name' => 'Area Manager']);
         $picRole = Role::firstOrCreate(['name' => 'PIC Digital Cabang']);
 
-        // 2. Create 5 Branches (PT Aspacindo Kedaton Motor Yamaha Dealers)
+        // 2. Create 7 Branches (PT Aspacindo Kedaton Motor Yamaha Dealers)
         $branchesData = [
             [
                 'kode' => 'AKM-PKU-01',
@@ -57,6 +57,22 @@ class DatabaseSeeder extends Seeder
                 'alamat' => 'Jl. Sisingamangaraja No. 210, Medan, Sumatera Utara',
                 'area' => 'Medan & North Sumatra',
                 'manager_name' => 'Agus Pratama',
+                'status' => 'active',
+            ],
+            [
+                'kode' => 'AKM-AMK-06',
+                'nama_cabang' => 'AKM Air Molek',
+                'alamat' => 'Jl. Jendral Sudirman No. 34, Air Molek, Indragiri Hulu, Riau',
+                'area' => 'Indragiri Hulu & Air Molek',
+                'manager_name' => 'Dedi Kurniawan',
+                'status' => 'active',
+            ],
+            [
+                'kode' => 'AKM-TBL-07',
+                'nama_cabang' => 'AKM Tembilahan',
+                'alamat' => 'Jl. M. Boya No. 56, Tembilahan, Indragiri Hilir, Riau',
+                'area' => 'Indragiri Hilir & Tembilahan',
+                'manager_name' => 'Faisal Rahman',
                 'status' => 'active',
             ],
         ];
@@ -124,7 +140,7 @@ class DatabaseSeeder extends Seeder
         $areaManagerAlias->assignRole($areaManagerRole);
 
         // 5. Create PIC Digital Users (1 per branch)
-        $picSlugList = ['pekanbaru', 'sorek', 'kandis', 'sungaipagar', 'medan'];
+        $picSlugList = ['pekanbaru', 'sorek', 'kandis', 'sungaipagar', 'medan', 'airmolek', 'tembilahan'];
         foreach ($branches as $index => $branch) {
             $slug = $picSlugList[$index];
 

@@ -45,7 +45,13 @@ class TiktokLiveReportController extends Controller
                 ->addColumn('jumlah_like', fn($row) => number_format($row->jumlah_like))
                 ->addColumn('jumlah_komentar', fn($row) => number_format($row->jumlah_komentar))
                 ->addColumn('jumlah_share', fn($row) => number_format($row->jumlah_share))
-                ->addColumn('stu', fn($row) => $row->stu !== null ? number_format($row->stu) . ' Unit' : '-')
+                ->addColumn('stu', function ($row) {
+                    if ($row->stu !== null && $row->stu > 0) {
+                        $unitInfo = $row->unit_terjual ? '<br><span class="badge bg-light text-dark border mt-1"><i class="fas fa-motorcycle text-danger me-1"></i>' . e($row->unit_terjual) . '</span>' : '';
+                        return '<span class="badge bg-success-subtle text-success border border-success fw-bold px-2 py-1">' . number_format($row->stu) . ' Unit</span>' . $unitInfo;
+                    }
+                    return '<span class="text-muted small">-</span>';
+                })
                 ->addColumn('bukti_screenshot_url', function ($row) {
                     if ($row->bukti_screenshot_url) {
                         return '<a href="' . $row->bukti_screenshot_url . '" target="_blank" class="badge bg-info text-white text-decoration-none px-2 py-1"><i class="fas fa-external-link-alt me-1"></i> Link SS Live</a>';
@@ -60,7 +66,7 @@ class TiktokLiveReportController extends Controller
 
                     return '<div class="btn-group">' . $btnEdit . $btnDelete . '</div>';
                 })
-                ->rawColumns(['bukti_screenshot_url', 'action'])
+                ->rawColumns(['stu', 'bukti_screenshot_url', 'action'])
                 ->make(true);
         }
 
@@ -305,6 +311,7 @@ class TiktokLiveReportController extends Controller
         $report->jumlah_komentar = $data['jumlah_komentar'] ?? 0;
         $report->jumlah_share = $data['jumlah_share'] ?? 0;
         $report->stu = array_key_exists('stu', $data) ? $data['stu'] : null;
+        $report->unit_terjual = $data['unit_terjual'] ?? null;
         $report->catatan = $data['catatan'] ?? null;
 
         if ($request->hasFile('bukti_screenshot')) {

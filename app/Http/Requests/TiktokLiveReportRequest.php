@@ -25,6 +25,7 @@ class TiktokLiveReportRequest extends FormRequest
             'jumlah_komentar' => 'required|integer|min:0',
             'jumlah_share' => 'required|integer|min:0',
             'stu' => 'nullable|integer|min:0',
+            'unit_terjual' => 'nullable|string|max:255',
             'catatan' => 'nullable|string',
         ];
 

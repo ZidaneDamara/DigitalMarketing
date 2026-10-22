@@ -608,22 +608,41 @@
                             </div>
                             <div class="col-12 col-md-6">
                                 <label class="form-label small fw-bold">Product Yang di Iklankan <span class="text-danger">*</span></label>
-                                <input type="text" name="product" id="form_product" class="form-control form-control-lg fs-6" list="yamahaProductList" placeholder="Pilih atau ketik model motor..." required autocomplete="off">
-                                <datalist id="yamahaProductList">
-                                    <option value="NMAX Turbo">
-                                    <option value="NMAX Neo">
-                                    <option value="Aerox 155 Connected">
-                                    <option value="Grand Filano Hybrid">
-                                    <option value="Fazzio Hybrid">
-                                    <option value="XMAX Connected">
-                                    <option value="Lexi LX 155">
-                                    <option value="Gear 125">
-                                    <option value="FreeGo 125 Connected">
-                                    <option value="R15 Connected">
-                                    <option value="WR 155 R">
-                                    <option value="All New Vixion">
-                                </datalist>
-                                <small class="text-muted" style="font-size: 0.72rem;">Ketik langsung atau pilih unit motor Yamaha dari daftar rekomendasi.</small>
+                                <select name="product" id="form_product" class="form-select form-select-lg fs-6" required>
+                                    <option value="">-- Pilih Model Motor Yamaha --</option>
+                                    <option value="GEAR ULTIMA 125 HYBRID">GEAR ULTIMA 125 HYBRID</option>
+                                    <option value="GEAR ULTIMA 125 HYBRID S">GEAR ULTIMA 125 HYBRID S</option>
+                                    <option value="GEAR ULTIMA 125 HYBRID SOLID">GEAR ULTIMA 125 HYBRID SOLID</option>
+                                    <option value="GEAR ULTIMA 125 HYBRID SMART">GEAR ULTIMA 125 HYBRID SMART</option>
+                                    <option value="FAZZIO HYBRID">FAZZIO HYBRID</option>
+                                    <option value="FAZZIO HYBRID NEO">FAZZIO HYBRID NEO</option>
+                                    <option value="FAZZIO HYBRID LUX">FAZZIO HYBRID LUX</option>
+                                    <option value="FAZZIO STARRY NIGHT">FAZZIO STARRY NIGHT</option>
+                                    <option value="GRAND FILANO HYBRID NEO">GRAND FILANO HYBRID NEO</option>
+                                    <option value="GRAND FILANO HYBRID LUX">GRAND FILANO HYBRID LUX</option>
+                                    <option value="FREEGO 125">FREEGO 125</option>
+                                    <option value="VEGA FORCE DB CW">VEGA FORCE DB CW</option>
+                                    <option value="JUPITER Z CW FI">JUPITER Z CW FI</option>
+                                    <option value="MX KING 150">MX KING 150</option>
+                                    <option value="MX KING 150 PRIMA PRAMAC">MX KING 150 PRIMA PRAMAC</option>
+                                    <option value="LEXI LX 155 C">LEXI LX 155 C</option>
+                                    <option value="LEXI LX 155 S C">LEXI LX 155 S C</option>
+                                    <option value="ALL NEW AEROX 155">ALL NEW AEROX 155</option>
+                                    <option value="ALL NEW AEROX 155 CYBERCITY">ALL NEW AEROX 155 CYBERCITY</option>
+                                    <option value="AEROX ALPHA">AEROX ALPHA</option>
+                                    <option value="AEROX ALPHA CYBERCITY ABS">AEROX ALPHA CYBERCITY ABS</option>
+                                    <option value="AEROX ALPHA TURBO">AEROX ALPHA TURBO</option>
+                                    <option value="NMAX NEO">NMAX NEO</option>
+                                    <option value="NMAX NEO S">NMAX NEO S</option>
+                                    <option value="NMAX TURBO">NMAX TURBO</option>
+                                    <option value="NMAX TURBO TECH MAX">NMAX TURBO TECH MAX</option>
+                                    <option value="XMAX C">XMAX C</option>
+                                    <option value="XMAX TECH MAX">XMAX TECH MAX</option>
+                                    <option value="ALL NEW VIXION">ALL NEW VIXION</option>
+                                    <option value="WR 155 R">WR 155 R</option>
+                                    <option value="ALL NEW XSR 155">ALL NEW XSR 155</option>
+                                    <option value="ALL NEW R15 C">ALL NEW R15 C</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -714,6 +733,49 @@
                                     <span class="input-group-text bg-danger text-white fw-bold">Unit</span>
                                 </div>
                                 <small class="text-muted" style="font-size: 0.7rem;">Total unit motor terjual dari iklan</small>
+                            </div>
+
+                            <!-- Detail Unit Yamaha Terjual (STU) -->
+                            <div class="col-12 mt-2">
+                                <label class="form-label small fw-bold text-dark">
+                                    <i class="fas fa-motorcycle text-danger me-1"></i> Unit Yamaha Terjual <span class="text-muted fw-normal">(Jika ada closing STU)</span>
+                                </label>
+                                <select name="unit_terjual" id="form_unit_terjual" class="form-select">
+                                    <option value="">-- Pilih Model Motor Yamaha --</option>
+                                    <option value="GEAR ULTIMA 125 HYBRID">GEAR ULTIMA 125 HYBRID</option>
+                                    <option value="GEAR ULTIMA 125 HYBRID S">GEAR ULTIMA 125 HYBRID S</option>
+                                    <option value="GEAR ULTIMA 125 HYBRID SOLID">GEAR ULTIMA 125 HYBRID SOLID</option>
+                                    <option value="GEAR ULTIMA 125 HYBRID SMART">GEAR ULTIMA 125 HYBRID SMART</option>
+                                    <option value="FAZZIO HYBRID">FAZZIO HYBRID</option>
+                                    <option value="FAZZIO HYBRID NEO">FAZZIO HYBRID NEO</option>
+                                    <option value="FAZZIO HYBRID LUX">FAZZIO HYBRID LUX</option>
+                                    <option value="FAZZIO STARRY NIGHT">FAZZIO STARRY NIGHT</option>
+                                    <option value="GRAND FILANO HYBRID NEO">GRAND FILANO HYBRID NEO</option>
+                                    <option value="GRAND FILANO HYBRID LUX">GRAND FILANO HYBRID LUX</option>
+                                    <option value="FREEGO 125">FREEGO 125</option>
+                                    <option value="VEGA FORCE DB CW">VEGA FORCE DB CW</option>
+                                    <option value="JUPITER Z CW FI">JUPITER Z CW FI</option>
+                                    <option value="MX KING 150">MX KING 150</option>
+                                    <option value="MX KING 150 PRIMA PRAMAC">MX KING 150 PRIMA PRAMAC</option>
+                                    <option value="LEXI LX 155 C">LEXI LX 155 C</option>
+                                    <option value="LEXI LX 155 S C">LEXI LX 155 S C</option>
+                                    <option value="ALL NEW AEROX 155">ALL NEW AEROX 155</option>
+                                    <option value="ALL NEW AEROX 155 CYBERCITY">ALL NEW AEROX 155 CYBERCITY</option>
+                                    <option value="AEROX ALPHA">AEROX ALPHA</option>
+                                    <option value="AEROX ALPHA CYBERCITY ABS">AEROX ALPHA CYBERCITY ABS</option>
+                                    <option value="AEROX ALPHA TURBO">AEROX ALPHA TURBO</option>
+                                    <option value="NMAX NEO">NMAX NEO</option>
+                                    <option value="NMAX NEO S">NMAX NEO S</option>
+                                    <option value="NMAX TURBO">NMAX TURBO</option>
+                                    <option value="NMAX TURBO TECH MAX">NMAX TURBO TECH MAX</option>
+                                    <option value="XMAX C">XMAX C</option>
+                                    <option value="XMAX TECH MAX">XMAX TECH MAX</option>
+                                    <option value="ALL NEW VIXION">ALL NEW VIXION</option>
+                                    <option value="WR 155 R">WR 155 R</option>
+                                    <option value="ALL NEW XSR 155">ALL NEW XSR 155</option>
+                                    <option value="ALL NEW R15 C">ALL NEW R15 C</option>
+                                </select>
+                                <small class="text-muted" style="font-size: 0.72rem;">Pilih model unit motor Yamaha yang berhasil closing STU dari kampanye iklan ini.</small>
                             </div>
                         </div>
                     </div>
@@ -1032,6 +1094,7 @@ $(document).ready(function() {
     $('#btnTambahReport').on('click', function() {
         $('#formMetaAds')[0].reset();
         $('#report_id').val('');
+        $('#form_unit_terjual').val('');
         $('#modalMetaAdsTitle').html('<i class="fab fa-facebook me-2 text-info"></i> Input Monthly Report Meta Ads');
         $('#preview_bukti_topup_container').addClass('d-none');
         $('#selected_pdf_info').addClass('d-none');
@@ -1135,6 +1198,7 @@ $(document).ready(function() {
             $('#form_total_percakapan').val(data.total_percakapan);
             $('#form_budget').val(data.budget);
             $('#form_stu').val(data.stu);
+            $('#form_unit_terjual').val(data.unit_terjual || '');
             $('#form_catatan').val(data.catatan);
 
             // Existing Invoice PDF

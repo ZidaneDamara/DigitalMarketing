@@ -22,6 +22,7 @@ class TiktokLiveReport extends Model
         'jumlah_komentar',
         'jumlah_share',
         'stu',
+        'unit_terjual',
         'bukti_screenshot',
         'catatan',
     ];

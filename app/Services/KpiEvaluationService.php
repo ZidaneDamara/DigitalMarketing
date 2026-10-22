@@ -44,7 +44,7 @@ class KpiEvaluationService
 
         $targetIgGrowth = $target ? (int) $target->ig_followers_growth_target : 150;
         $targetTiktokGrowth = $target ? (int) $target->tiktok_followers_growth_target : 150;
-        $dealerStuTarget = $target ? $target->getDealerStuTargetForBranch($branch->id) : 50;
+        $dealerStuTarget = $target ? $target->getDealerStuTargetForBranch($branch->id, $branch->nama_cabang) : KpiTarget::resolveTargetForBranchName($branch->nama_cabang);
         $prospectRatioPct = $target ? (float) $target->prospect_digital_ratio_pct : 130.0;
         $targetProspect = (int) round(($prospectRatioPct / 100) * $dealerStuTarget);
         $targetCpmMax = $target ? (float) $target->ads_cpm_max : 30000.0;

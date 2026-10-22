@@ -26,6 +26,7 @@ class MetaAdsReport extends Model
         'budget',
         'bukti_topup',
         'stu',
+        'unit_terjual',
         'catatan',
     ];
 
@@ -106,22 +107,22 @@ class MetaAdsReport extends Model
 
     public function getFormattedBudgetAttribute(): string
     {
-        return 'Rp ' . number_format($this->budget, 0, ',', '.');
+        return 'Rp ' . number_format((float) ($this->budget ?? 0), 0, ',', '.');
     }
 
     public function getFormattedCpcAttribute(): string
     {
-        return 'Rp ' . number_format($this->cpc, 0, ',', '.');
+        return 'Rp ' . number_format((float) ($this->cpc ?? 0), 0, ',', '.');
     }
 
     public function getFormattedCpmAttribute(): string
     {
-        return 'Rp ' . number_format($this->cpm, 0, ',', '.');
+        return 'Rp ' . number_format((float) ($this->cpm ?? 0), 0, ',', '.');
     }
 
     public function getFormattedCplAttribute(): string
     {
-        return 'Rp ' . number_format($this->cpl, 0, ',', '.');
+        return 'Rp ' . number_format((float) ($this->cpl ?? 0), 0, ',', '.');
     }
 
     public function getCostPerStuAttribute(): float
