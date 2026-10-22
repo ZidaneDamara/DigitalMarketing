@@ -18,6 +18,7 @@ class GoogleRatingTestimonial extends Model
         'tahun',
         'nama_reviewer',
         'rating_bintang',
+        'jabatan',
         'foto_testimoni',
         'komentar_ulasan',
     ];
@@ -32,6 +33,7 @@ class GoogleRatingTestimonial extends Model
     protected $appends = [
         'foto_testimoni_url',
         'formatted_tanggal',
+        'jabatan_badge',
     ];
 
     public function branch()
@@ -76,5 +78,19 @@ class GoogleRatingTestimonial extends Model
     public function getFormattedTanggalAttribute(): string
     {
         return $this->tanggal ? $this->tanggal->format('d M Y') : '-';
+    }
+
+    public function getJabatanBadgeAttribute(): string
+    {
+        $role = $this->jabatan ?? 'PIC Digital';
+        $badgeClass = match ($role) {
+            'Admin Part' => 'bg-secondary text-white',
+            'Sales Counter' => 'bg-warning text-dark',
+            'Service Counter' => 'bg-info text-dark',
+            'PIC Digital' => 'bg-primary text-white',
+            default => 'bg-light text-dark border',
+        };
+
+        return '<span class="badge ' . $badgeClass . ' rounded-pill px-2 py-1" style="font-size: 0.75rem;">' . e($role) . '</span>';
     }
 }

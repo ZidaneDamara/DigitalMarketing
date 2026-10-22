@@ -51,6 +51,7 @@ class GoogleRatingReportController extends Controller
                 ->addColumn('cabang', fn($row) => $row->branch->nama_cabang ?? '-')
                 ->editColumn('tanggal', fn($row) => $row->formatted_tanggal)
                 ->editColumn('nama_reviewer', fn($row) => '<strong>' . e($row->nama_reviewer) . '</strong>')
+                ->editColumn('jabatan', fn($row) => $row->jabatan_badge)
                 ->editColumn('rating_bintang', function ($row) {
                     $stars = '';
                     for ($i = 1; $i <= 5; $i++) {
@@ -83,7 +84,7 @@ class GoogleRatingReportController extends Controller
                     }
                     return '-';
                 })
-                ->rawColumns(['nama_reviewer', 'rating_bintang', 'komentar_ulasan', 'foto_btn', 'action'])
+                ->rawColumns(['nama_reviewer', 'jabatan', 'rating_bintang', 'komentar_ulasan', 'foto_btn', 'action'])
                 ->make(true);
         }
 
@@ -234,6 +235,7 @@ class GoogleRatingReportController extends Controller
             'branch_id' => 'required|exists:branches,id',
             'tanggal' => 'required|date',
             'nama_reviewer' => 'nullable|string|max:255',
+            'jabatan' => 'required|in:Admin Part,Sales Counter,Service Counter,PIC Digital',
             'rating_bintang' => 'required|integer|between:1,5',
             'komentar_ulasan' => 'nullable|string',
             'foto_testimoni' => 'nullable|image|max:10240',
@@ -284,6 +286,7 @@ class GoogleRatingReportController extends Controller
                     'bulan' => $bulan,
                     'tahun' => $tahun,
                     'nama_reviewer' => $reviewerName,
+                    'jabatan' => $validated['jabatan'] ?? 'PIC Digital',
                     'rating_bintang' => $validated['rating_bintang'],
                     'foto_testimoni' => $path,
                     'komentar_ulasan' => $validated['komentar_ulasan'] ?? null,
@@ -303,6 +306,7 @@ class GoogleRatingReportController extends Controller
                 'bulan' => $bulan,
                 'tahun' => $tahun,
                 'nama_reviewer' => $validated['nama_reviewer'] ?: 'Konsumen Yamaha',
+                'jabatan' => $validated['jabatan'] ?? 'PIC Digital',
                 'rating_bintang' => $validated['rating_bintang'],
                 'foto_testimoni' => $path,
                 'komentar_ulasan' => $validated['komentar_ulasan'] ?? null,

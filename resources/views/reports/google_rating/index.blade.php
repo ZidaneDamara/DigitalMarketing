@@ -264,7 +264,10 @@
                                         </div>
                                         <div class="p-3 d-flex flex-column justify-content-between flex-grow-1">
                                             <div>
-                                                <h6 class="fw-bold text-dark mb-1 text-truncate">{{ $item->nama_reviewer }}</h6>
+                                                <div class="d-flex align-items-center justify-content-between mb-1">
+                                                    <h6 class="fw-bold text-dark mb-0 text-truncate pe-1">{{ $item->nama_reviewer }}</h6>
+                                                    {!! $item->jabatan_badge !!}
+                                                </div>
                                                 <small class="text-muted d-block mb-2"><i class="fas fa-building me-1"></i> {{ $item->branch?->nama_cabang }}</small>
                                                 <p class="text-muted small m-0 fst-italic text-truncate" style="max-height: 40px;">
                                                     "{{ $item->komentar_ulasan ?: 'Pelayanan ramah, dealer Yamaha mantap!' }}"
@@ -307,6 +310,7 @@
                                     <th>Cabang</th>
                                     <th>Tanggal Review</th>
                                     <th>Nama Reviewer</th>
+                                    <th>Petugas / Divisi</th>
                                     <th>Rating Bintang</th>
                                     <th>Komentar Ulasan</th>
                                     <th>Foto Bukti</th>
@@ -452,11 +456,20 @@
                     </div>
 
                     <div class="row g-3 mb-3">
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 col-md-4">
                             <label class="form-label small fw-semibold">Nama Konsumen / Reviewer</label>
                             <input type="text" name="nama_reviewer" class="form-control" placeholder="Contoh: Bpk. Hendra Gunawan" value="Konsumen Yamaha">
                         </div>
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 col-md-4">
+                            <label class="form-label small fw-semibold">Petugas / Divisi <span class="text-danger">*</span></label>
+                            <select name="jabatan" class="form-select" required>
+                                <option value="PIC Digital" selected>PIC Digital</option>
+                                <option value="Sales Counter">Sales Counter</option>
+                                <option value="Service Counter">Service Counter</option>
+                                <option value="Admin Part">Admin Part</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-4">
                             <label class="form-label small fw-semibold">Rating Bintang <span class="text-danger">*</span></label>
                             <select name="rating_bintang" class="form-select" required>
                                 <option value="5" selected>⭐⭐⭐⭐⭐ 5 Bintang (Sangat Puas)</option>
@@ -533,6 +546,7 @@ $(document).ready(function() {
             { data: 'cabang', name: 'branch.nama_cabang' },
             { data: 'tanggal', name: 'tanggal' },
             { data: 'nama_reviewer', name: 'nama_reviewer' },
+            { data: 'jabatan', name: 'jabatan' },
             { data: 'rating_bintang', name: 'rating_bintang' },
             { data: 'komentar_ulasan', name: 'komentar_ulasan' },
             { data: 'foto_btn', name: 'foto_btn', orderable: false, searchable: false },
