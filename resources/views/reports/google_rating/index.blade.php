@@ -278,9 +278,14 @@
                                                     <i class="fas fa-search-plus me-1"></i> Perbesar
                                                 </button>
                                                 @if(auth()->user()->hasRole('Super Admin') || (auth()->user()->hasRole('PIC Digital Cabang') && auth()->user()->branch_id == $item->branch_id))
-                                                    <button type="button" class="btn btn-sm btn-outline-danger rounded-circle btn-delete-testimonial" data-id="{{ $item->id }}" title="Hapus Testimoni">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
+                                                    <div class="d-flex align-items-center gap-1">
+                                                        <button type="button" class="btn btn-sm btn-outline-warning rounded-circle btn-edit-testimonial" data-id="{{ $item->id }}" title="Edit Testimoni" style="width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center;">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-outline-danger rounded-circle btn-delete-testimonial" data-id="{{ $item->id }}" title="Hapus Testimoni" style="width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center;">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
                                                 @endif
                                             </div>
                                         </div>
@@ -509,6 +514,108 @@
     </div>
 </div>
 
+<!-- Modal Edit: Form Edit Testimoni Google Rating -->
+<div class="modal fade" id="modalEditTestimoni" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-gradient text-white" style="background: linear-gradient(135deg, #002266 0%, #003399 100%);">
+                <h5 class="modal-title fw-bold">
+                    <i class="fas fa-edit text-warning me-2"></i> Edit Testimoni Google Rating
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formEditTestimoni" enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" name="id" id="edit_testimoni_id">
+                <div class="modal-body p-4">
+                    <div class="row g-3 mb-3">
+                        @if(auth()->user()->hasRole('PIC Digital Cabang'))
+                            <input type="hidden" name="branch_id" id="edit_branch_id_val" value="{{ auth()->user()->branch_id }}">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small fw-semibold">Cabang</label>
+                                <input type="text" class="form-control" value="{{ auth()->user()->branch?->nama_cabang }}" readonly>
+                            </div>
+                        @else
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small fw-semibold">Pilih Cabang <span class="text-danger">*</span></label>
+                                <select name="branch_id" id="edit_branch_id" class="form-select" required>
+                                    @foreach($branches as $b)
+                                        <option value="{{ $b->id }}">{{ $b->nama_cabang }} ({{ $b->kode }})</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endif
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label small fw-semibold">Tanggal Testimoni <span class="text-danger">*</span></label>
+                            <input type="date" name="tanggal" id="edit_tanggal" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-md-4">
+                            <label class="form-label small fw-semibold">Nama Konsumen / Reviewer <span class="text-danger">*</span></label>
+                            <input type="text" name="nama_reviewer" id="edit_nama_reviewer" class="form-control" placeholder="Contoh: Bpk. Hendra Gunawan" required>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label class="form-label small fw-semibold">Petugas / Divisi <span class="text-danger">*</span></label>
+                            <select name="jabatan" id="edit_jabatan" class="form-select" required>
+                                <option value="PIC Digital">PIC Digital</option>
+                                <option value="Sales Counter">Sales Counter</option>
+                                <option value="Service Counter">Service Counter</option>
+                                <option value="Admin Part">Admin Part</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label class="form-label small fw-semibold">Rating Bintang <span class="text-danger">*</span></label>
+                            <select name="rating_bintang" id="edit_rating_bintang" class="form-select" required>
+                                <option value="5">⭐⭐⭐⭐⭐ 5 Bintang (Sangat Puas)</option>
+                                <option value="4">⭐⭐⭐⭐ 4 Bintang (Puas)</option>
+                                <option value="3">⭐⭐⭐ 3 Bintang (Cukup)</option>
+                                <option value="2">⭐⭐ 2 Bintang (Kurang)</option>
+                                <option value="1">⭐ 1 Bintang (Tidak Puas)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Foto Screenshot Testimoni Saat Ini & Ganti Foto -->
+                    <div class="p-3 bg-light rounded-3 border mb-3">
+                        <label class="form-label small fw-bold text-dark mb-2 d-flex align-items-center gap-2">
+                            <i class="fas fa-image text-primary"></i> Foto Screenshot Testimoni
+                        </label>
+                        <div class="row align-items-center g-3">
+                            <div class="col-auto" id="edit_current_photo_wrapper">
+                                <div class="position-relative border rounded overflow-hidden shadow-xs" style="width: 100px; height: 80px; background: #222;">
+                                    <img src="" id="edit_current_photo_img" class="w-100 h-100 cursor-pointer btn-preview-image" style="object-fit: cover;" title="Klik untuk memperbesar">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <label class="form-label small text-muted mb-1">Ganti Foto Screenshot (Opsional):</label>
+                                <input type="file" name="foto_testimoni" id="edit_foto_testimoni" class="form-control" accept="image/*">
+                                <div class="text-muted small mt-1" style="font-size: 0.75rem;">
+                                    <i class="fas fa-info-circle me-1"></i> Biarkan kosong jika tidak ingin mengubah foto screenshot. Format: JPG/PNG maks. 10MB.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label small fw-semibold">Komentar / Ulasan Konsumen (Opsional)</label>
+                        <textarea name="komentar_ulasan" id="edit_komentar_ulasan" class="form-control" rows="3" placeholder="Salin kutipan review konsumen di Google Maps jika ada..."></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-yamaha-primary rounded-pill px-4" id="btnSubmitEditTestimoni">
+                        <i class="fas fa-save me-1.5"></i> Simpan Perubahan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Modal 3: Lightbox Image Zoom -->
 <div class="modal fade" id="modalImagePreview" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -660,7 +767,109 @@ $(document).ready(function() {
         });
     });
 
-    // 6. Delete Testimonial
+    // 6. Open Edit Testimonial Modal
+    $(document).on('click', '.btn-edit-testimonial', function() {
+        const id = $(this).data('id');
+        const btn = $(this);
+        const originalHtml = btn.html();
+        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
+
+        $.ajax({
+            url: "{{ url('/reports/google-rating/testimonial') }}/" + id,
+            type: "GET",
+            success: function(res) {
+                btn.prop('disabled', false).html(originalHtml);
+                if (res.success && res.data) {
+                    const item = res.data;
+                    $('#edit_testimoni_id').val(item.id);
+                    if ($('#edit_branch_id').length) {
+                        $('#edit_branch_id').val(item.branch_id);
+                    }
+                    if ($('#edit_branch_id_val').length) {
+                        $('#edit_branch_id_val').val(item.branch_id);
+                    }
+                    if (item.tanggal) {
+                        const dateOnly = item.tanggal.substring(0, 10);
+                        $('#edit_tanggal').val(dateOnly);
+                    }
+                    $('#edit_nama_reviewer').val(item.nama_reviewer);
+                    $('#edit_jabatan').val(item.jabatan || 'PIC Digital');
+                    $('#edit_rating_bintang').val(item.rating_bintang);
+                    $('#edit_komentar_ulasan').val(item.komentar_ulasan || '');
+                    $('#edit_foto_testimoni').val('');
+
+                    if (res.foto_url) {
+                        $('#edit_current_photo_img').attr('src', res.foto_url).data('url', res.foto_url).data('title', 'Screenshot Testimoni: ' + item.nama_reviewer);
+                        $('#edit_current_photo_wrapper').show();
+                    } else {
+                        $('#edit_current_photo_wrapper').hide();
+                    }
+
+                    $('#modalEditTestimoni').modal('show');
+                }
+            },
+            error: function(xhr) {
+                btn.prop('disabled', false).html(originalHtml);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal Memuat Data',
+                    text: xhr.responseJSON ? xhr.responseJSON.message : 'Terjadi kesalahan sistem saat mengambil data ulasan.'
+                });
+            }
+        });
+    });
+
+    // 7. Submit Edit Testimonial Form
+    $('#formEditTestimoni').on('submit', function(e) {
+        e.preventDefault();
+        const id = $('#edit_testimoni_id').val();
+        const submitBtn = $('#btnSubmitEditTestimoni');
+        submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Menyimpan Perubahan...');
+
+        const formData = new FormData(this);
+
+        $.ajax({
+            url: "{{ url('/reports/google-rating/testimonial') }}/" + id + "/update",
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(res) {
+                submitBtn.prop('disabled', false).html('<i class="fas fa-save me-1.5"></i> Simpan Perubahan');
+                if (res.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: res.message,
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    $('#modalEditTestimoni').modal('hide');
+                    setTimeout(() => location.reload(), 1200);
+                }
+            },
+            error: function(xhr) {
+                submitBtn.prop('disabled', false).html('<i class="fas fa-save me-1.5"></i> Simpan Perubahan');
+                let errHtml = '';
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    $.each(xhr.responseJSON.errors, function(key, val) {
+                        errHtml += '<p class="m-0 text-start">• ' + val[0] + '</p>';
+                    });
+                } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errHtml = xhr.responseJSON.message;
+                } else {
+                    errHtml = 'Terjadi kesalahan sistem.';
+                }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal Menyimpan!',
+                    html: errHtml
+                });
+            }
+        });
+    });
+
+    // 8. Delete Testimonial
     $(document).on('click', '.btn-delete-testimonial', function() {
         const id = $(this).data('id');
         Swal.fire({

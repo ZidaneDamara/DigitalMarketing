@@ -78,9 +78,14 @@ class GoogleRatingReportController extends Controller
                     return '<span class="text-muted small">-</span>';
                 })
                 ->addColumn('action', function ($row) use ($user) {
+                    $canEdit = $user->hasRole('Super Admin') || ($user->hasRole('PIC Digital Cabang') && $user->branch_id == $row->branch_id);
                     $canDelete = $user->hasRole('Super Admin') || ($user->hasRole('PIC Digital Cabang') && $user->branch_id == $row->branch_id);
-                    if ($canDelete) {
-                        return '<button type="button" class="btn btn-sm btn-outline-danger btn-delete-testimonial" data-id="' . $row->id . '" title="Hapus Testimoni"><i class="fas fa-trash"></i></button>';
+
+                    $btnEdit = $canEdit ? '<button type="button" class="btn btn-sm btn-outline-warning btn-edit-testimonial me-1 shadow-xs" data-id="' . $row->id . '" title="Edit Testimoni"><i class="fas fa-edit"></i></button>' : '';
+                    $btnDelete = $canDelete ? '<button type="button" class="btn btn-sm btn-outline-danger btn-delete-testimonial shadow-xs" data-id="' . $row->id . '" title="Hapus Testimoni"><i class="fas fa-trash"></i></button>' : '';
+
+                    if ($btnEdit || $btnDelete) {
+                        return '<div class="d-inline-flex align-items-center">' . $btnEdit . $btnDelete . '</div>';
                     }
                     return '-';
                 })
@@ -341,6 +346,99 @@ class GoogleRatingReportController extends Controller
             'warning_message' => $isTodayTargetMet
                 ? "🎉 Target harian minimal 5 testimoni terpenuhi ({$todayCount} testimoni)!"
                 : "⚠️ Input testimoni hari ini: {$todayCount}/5. Kurang {$todayDeficiency} testimoni lagi!",
+        ]);
+    }
+
+    public function showTestimonial(GoogleRatingTestimonial $testimonial)
+    {
+        return response()->json([
+            'success' => true,
+            'data' => $testimonial->load('branch'),
+            'foto_url' => $testimonial->foto_testimoni_url,
+        ]);
+    }
+
+    public function updateTestimonial(Request $request, GoogleRatingTestimonial $testimonial)
+    {
+        $user = Auth::user();
+
+        if ($user->hasRole('PIC Digital Cabang') && $testimonial->branch_id != $user->branch_id) {
+            return response()->json(['success' => false, 'message' => 'Anda tidak memiliki hak untuk mengubah data ini.'], 403);
+        }
+
+        $rules = [
+            'branch_id' => 'required|exists:branches,id',
+            'tanggal' => 'required|date',
+            'nama_reviewer' => 'nullable|string|max:255',
+            'jabatan' => 'required|in:Admin Part,Sales Counter,Service Counter,PIC Digital',
+            'rating_bintang' => 'required|integer|between:1,5',
+            'komentar_ulasan' => 'nullable|string',
+            'foto_testimoni' => 'nullable|image|max:10240',
+        ];
+
+        if ($user->hasRole('PIC Digital Cabang')) {
+            $request->merge(['branch_id' => $user->branch_id]);
+        }
+
+        $validated = $request->validate($rules);
+
+        $tanggal = Carbon::parse($validated['tanggal']);
+        $bulan = $tanggal->month;
+        $tahun = $tanggal->year;
+
+        // Ensure monthly record exists if month or branch changes
+        $monthRecord = GoogleRatingMonth::firstOrCreate(
+            [
+                'branch_id' => $validated['branch_id'],
+                'bulan' => $bulan,
+                'tahun' => $tahun,
+            ],
+            [
+                'user_id' => $user->id,
+                'rating_awal_bulan' => 4.80,
+                'total_review_awal_bulan' => 0,
+                'target_bulanan' => 125,
+                'target_harian' => 5,
+            ]
+        );
+
+        $testimonial->google_rating_month_id = $monthRecord->id;
+        $testimonial->branch_id = $validated['branch_id'];
+        $testimonial->tanggal = $tanggal->toDateString();
+        $testimonial->bulan = $bulan;
+        $testimonial->tahun = $tahun;
+        $testimonial->nama_reviewer = $validated['nama_reviewer'] ?: 'Konsumen Yamaha';
+        $testimonial->jabatan = $validated['jabatan'];
+        $testimonial->rating_bintang = $validated['rating_bintang'];
+        $testimonial->komentar_ulasan = $validated['komentar_ulasan'] ?? null;
+
+        // If new photo uploaded, replace old one
+        if ($request->hasFile('foto_testimoni')) {
+            if ($testimonial->foto_testimoni) {
+                $clean = str_replace(['/storage/', 'storage/', '/files/', 'files/'], '', $testimonial->foto_testimoni);
+                $withoutPublic = preg_replace('#^public/#', '', ltrim($clean, '/'));
+                Storage::disk('public')->delete($withoutPublic);
+                Storage::delete($withoutPublic);
+            }
+
+            $photo = $request->file('foto_testimoni');
+            $filename = 'gr_' . time() . '_' . uniqid() . '.' . $photo->getClientOriginalExtension();
+            $path = $photo->storeAs('screenshots/google_rating', $filename, 'public');
+            $testimonial->foto_testimoni = $path;
+        }
+
+        $testimonial->save();
+
+        AuditLogService::log(
+            'UPDATE',
+            'Google Rating Testimonial',
+            "Memperbarui testimoni Google Rating ID #{$testimonial->id} ({$testimonial->nama_reviewer})"
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data testimoni Google Rating berhasil diperbarui!',
+            'data' => $testimonial,
         ]);
     }
 

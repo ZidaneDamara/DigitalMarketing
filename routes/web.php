@@ -99,6 +99,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reports/google-rating', [GoogleRatingReportController::class, 'index'])->name('reports.google-rating.index');
     Route::post('/reports/google-rating/baseline', [GoogleRatingReportController::class, 'storeBaseline'])->name('reports.google-rating.baseline.store');
     Route::post('/reports/google-rating/testimonial', [GoogleRatingReportController::class, 'storeTestimonial'])->name('reports.google-rating.testimonial.store');
+    Route::get('/reports/google-rating/testimonial/{testimonial}', [GoogleRatingReportController::class, 'showTestimonial'])->name('reports.google-rating.testimonial.show');
+    Route::post('/reports/google-rating/testimonial/{testimonial}/update', [GoogleRatingReportController::class, 'updateTestimonial'])->name('reports.google-rating.testimonial.update');
     Route::delete('/reports/google-rating/testimonial/{testimonial}', [GoogleRatingReportController::class, 'destroyTestimonial'])->name('reports.google-rating.testimonial.destroy');
 
     Route::get('/reports/weekly', [WeeklyReportController::class, 'index'])->name('reports.weekly.index');
