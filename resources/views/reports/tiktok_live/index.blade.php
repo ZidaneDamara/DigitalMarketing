@@ -409,13 +409,13 @@
                         </div>
 
                         <div class="col-12 col-md-8">
-                            <div class="d-flex align-items-center justify-content-between mb-1.5">
+                            <div class="d-flex align-items-center justify-content-between mb-2 pb-1">
                                 <label class="form-label fw-semibold small m-0">Unit Yamaha Terjual <span class="text-muted">(Jika ada closing STU)</span></label>
                                 <button type="button" class="btn btn-sm btn-outline-danger py-0 px-2 rounded-pill fw-semibold shadow-xs" id="btnAddLiveUnitTerjual" style="font-size: 0.78rem; height: 26px;">
                                     <i class="fas fa-plus me-1"></i> Tambah Motor
                                 </button>
                             </div>
-                            <div id="liveUnitTerjualContainer" class="d-flex flex-column gap-2">
+                            <div id="liveUnitTerjualContainer" class="d-flex flex-column gap-2 mt-1">
                                 <div class="unit-terjual-item d-flex align-items-center gap-2">
                                     <div class="flex-grow-1">
                                         <select name="unit_terjual[]" class="form-select rounded-3 shadow-none select-live-unit-terjual">

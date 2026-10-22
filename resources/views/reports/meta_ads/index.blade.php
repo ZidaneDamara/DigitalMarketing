@@ -737,7 +737,7 @@
 
                             <!-- Detail Unit Yamaha Terjual (STU) -->
                             <div class="col-12 mt-2">
-                                <div class="d-flex align-items-center justify-content-between mb-1.5">
+                                <div class="d-flex align-items-center justify-content-between mb-2 pb-1">
                                     <label class="form-label small fw-bold text-dark m-0">
                                         <i class="fas fa-motorcycle text-danger me-1"></i> Unit Yamaha Terjual <span class="text-muted fw-normal">(Jika ada closing STU)</span>
                                     </label>
@@ -745,7 +745,7 @@
                                         <i class="fas fa-plus me-1"></i> Tambah Motor
                                     </button>
                                 </div>
-                                <div id="unitTerjualContainer" class="d-flex flex-column gap-2">
+                                <div id="unitTerjualContainer" class="d-flex flex-column gap-2 mt-1">
                                     <div class="unit-terjual-item d-flex align-items-center gap-2">
                                         <div class="flex-grow-1">
                                             <select name="unit_terjual[]" class="form-select select-unit-terjual">
