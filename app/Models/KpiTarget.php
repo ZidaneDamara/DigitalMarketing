@@ -80,11 +80,54 @@ class KpiTarget extends Model
     /**
      * Get dealer STU target for a specific branch (with fallback to default)
      */
-    public function getDealerStuTargetForBranch(int $branchId): int
+    public function getDealerStuTargetForBranch(int $branchId, ?string $branchName = null): int
     {
         if (!empty($this->branch_dealer_stu_targets) && isset($this->branch_dealer_stu_targets[$branchId])) {
             return (int) $this->branch_dealer_stu_targets[$branchId];
         }
-        return (int) ($this->dealer_stu_target ?: 50);
+
+        if ($branchName) {
+            return static::resolveTargetForBranchName($branchName);
+        }
+
+        return (int) ($this->dealer_stu_target ?: 100);
+    }
+
+    /**
+     * Resolve default dealer STU target by branch name
+     *
+     * Target STU per dealer:
+     * - Pekanbaru = 95
+     * - Sungai Pagar = 75
+     * - Air Molek = 108
+     * - Sorek = 177
+     * - Kandis = 125
+     * - Medan = 136
+     * - Tembilahan = 75
+     */
+    public static function resolveTargetForBranchName(?string $branchName): int
+    {
+        if (empty($branchName)) {
+            return 100;
+        }
+
+        $bName = strtolower(trim($branchName));
+        $dealerTargets = [
+            'pekanbaru' => 95,
+            'sungai pagar' => 75,
+            'air molek' => 108,
+            'sorek' => 177,
+            'kandis' => 125,
+            'medan' => 136,
+            'tembilahan' => 75,
+        ];
+
+        foreach ($dealerTargets as $key => $val) {
+            if (str_contains($bName, $key)) {
+                return $val;
+            }
+        }
+
+        return 100;
     }
 }
